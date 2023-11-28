@@ -5,7 +5,7 @@ A collection amazing audio tools for working with audio and sound files in comfy
 
 # *Sample generator*  Tools to train a generative model on arbitrary audio samples
 
-A big shout out and thanks to the wonderful work done on Sample diffusion by Harmonai and a lot of core code is ported from same to this repo and any queries on the working for same can be linked to the repo ass shown here.<ahref ="https://github.com/Harmonai-org/sample-generator"> **sample-generator** </a>
+A big shout out and thanks to the wonderful work done on Sample diffusion by Harmonai and a lot of core code is ported from same to this repo and any queries on the working for same can be linked to the repo ass shown here. <a href ="https://github.com/Harmonai-org/sample-generator"> **sample-generator** </a>
 
 
 
