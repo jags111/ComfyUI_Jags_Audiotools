@@ -138,8 +138,20 @@ NODE_DISPLAY_NAME_MAPPINGS = {
   "GenerateAudioWave": WaveGenerator
     
 }
+CC_VERSION = 1.0
 
-__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
 
-  #      NODE_CLASS_MAPPINGS.update(node_import.NODE_CLASS_MAPPINGS)
+# web ui feature
+WEB_DIRECTORY = "js"
+
+#print confirmation
+
+print('--------------')
+print('*ComfyUI_Jags_Audiotools- nodes_loaded*')
+print('--------------')
+
+#__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
+__ALL__ = [NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS, CC_VERSION]
+
+#      NODE_CLASS_MAPPINGS.update(node_import.NODE_CLASS_MAPPINGS)
 
