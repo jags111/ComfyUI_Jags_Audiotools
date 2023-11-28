@@ -3,11 +3,21 @@ A collection amazing audio tools for working with audio and sound files in comfy
 
 ✨🍬Please note the work in this repo is not completed and still in progress and code will break until all things are sorted. Please wait as will announce same in the update here. Thanks for your support. Also note for any issues on the nodes, kindly share your workflow and alos always update comfyUI base including all dependencies.✨🍬
 
+🌈 🍬 Note we have made changes to the original repo by **Diontimmer** here and thankful to him for making htis possible , adding new nodes to experiment and certain features, experimental audio with contant updates. If you face any issue, ensure you have updated ComfyUi to the latest version and updates all requirements and share your workflow in the Issues. we are thankful to Harmonai-org and origianl repo for same🌈
+
 # *Sample generator*  Tools to train a generative model on arbitrary audio samples
 
 A big shout out and thanks to the wonderful work done on Sample diffusion by Harmonai and a lot of core code is ported from same to this repo and any queries on the working for same can be linked to the repo ass shown here. <a href ="https://github.com/Harmonai-org/sample-generator"> **sample-generator** </a>
 
+### Features
 
+Allows the use of trained dance diffusion/sample generator models in ComfyUI.
+
+Also included are two optional extensions of the extension (lol); Wave Generator for creating primitive waves aswell as a wrapper for the Pedalboard library.
+
+The pedalboard wrapper allows us to wrap most vst3s and control them, for now only a wrapper for OTT is included. Any suggestions are welcome.
+
+Includes a couple of  helper functions.
 
 ### Nodes
 
@@ -31,10 +41,24 @@ To install, drop the "_**ComfyUI_Jags_Audiotools**_" folder into the "_**...\Com
 
 But the best method is to install same from ComfyUI Manager (https://github.com/ltdrdata/ComfyUI-Manager) and search for this name in the Node list and install from there and restart the UI as it takes care of all the dependencies and installs and make it easy for you. 
 
+# Models - downloads and updates : 
+
+Place models in ComfyUI/models/audio_diffusion ('model_folder' entry in config.yaml is accepted).
+
+(Optional) Install xfer OTT VST3 from the website link [xfer OTT](https://xferrecords.com/freeware)
+
 ## Todo
 
 [ ] Add guidance to notebook
 
+## Acknowledgements
+
+ - [sample-diffusion](https://github.com/sudosilico/sample-diffusion)
+ - [pythongosssss](https://github.com/pythongosssss) 
+ - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
+ - [Harmonai](https://github.com/Harmonai-org/sample-generator)
+ - [pedalboard](https://github.com/spotify/pedalboard)
+ - [xfer OTT](https://xferrecords.com/freeware)
 
 # Comfy Resources
 
