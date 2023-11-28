@@ -1,0 +1,22 @@
+name: dd
+channels:
+  - pytorch
+  - conda-forge
+dependencies: 
+  - git
+  - pip=22.2.2
+  - python=3.10.5
+  - setuptools
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pip:
+    - -e .
+    - v-diffusion-pytorch
+    - k-diffusion
+    - black
+    - diffusers
+variables:
+  PYTORCH_ENABLE_MPS_FALLBACK: 1
+  TRANSFORMERS_OFFLINE: 1
+  HF_DATASETS_OFFLINE: 1

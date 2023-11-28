@@ -1,0 +1,24 @@
+name: dd
+channels:
+  - pytorch
+  - nvidia
+  - defaults
+dependencies: 
+  - git
+  - python=3.10
+  - pip=22.2.2
+  - pytorch=1.12.1
+  - pytorch-cuda=11.7
+  - torchvision
+  - torchaudio
+  - setuptools
+  - pip:
+    - -e .
+    - v-diffusion-pytorch
+    - k-diffusion
+    - PySoundFile
+    - black
+    - diffusers
+variables:
+  TRANSFORMERS_OFFLINE: 1
+  HF_DATASETS_OFFLINE: 1
