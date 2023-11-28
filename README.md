@@ -3,6 +3,12 @@ A collection amazing audio tools for working with audio and sound files in comfy
 
 ✨🍬Please note the work in this repo is not completed and still in progress and code will break until all things are sorted. Please wait as will announce same in the update here. Thanks for your support. Also note for any issues on the nodes, kindly share your workflow and alos always update comfyUI base including all dependencies.✨🍬
 
+# *Sample generator*  Tools to train a generative model on arbitrary audio samples
+
+A big shout out and thanks to the wonderful work done on Sample diffusion by Harmonai and a lot of core code is ported from same to this repo and any queries on the working for same can be linked to the repo ass shown here.<ahref ="https://github.com/Harmonai-org/sample-generator"> **sample-generator** </a>
+
+
+
 ### Nodes
 
 
