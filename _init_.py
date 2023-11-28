@@ -5,17 +5,17 @@ import utils
 import folder_paths
 
 custom_nodes_path = os.path.join(folder_paths.base_path, "custom_nodes")
-SampleDiffusion_path = os.path.join(custom_nodes_path, "SampleDiffusion")
-sys.path.append(SampleDiffusion_path)
+SampleDiffusion_path = os.path.join(custom_nodes_path, "ComfyUI_Jags_Audiotools")
+sys.path.append(ComfyUI_Jags_Audiotools_path)
 
 # from .server import server
 
-from .EXT_AudioManipulation import JoinAudio, BatchJoinAudio, LayerAudio, CutAudio, DuplicateAudio, StretchAudio, ReverseAudio, ResampleAudio, SeparatePercussion
-from .EXT_PedalBoard import ( OTT, LoadVST, BitCrushEffect, ChorusEffect, ClippingEffect, CompressorEffect, ConvolutionEffect, DelayEffect, DistortionEffect,GainEffect, InvertEffect, LimiterEffect, MP3CompressorEffect, NoiseGateEffect, PitchShiftEffect, PhaserEffect, ReverbEffect, HighShelfFilterEffect, HighpassFilterEffect, LadderFilterEffect, LowShelfFilterEffect, LowpassFilterEffect, PeakFilterEffect  )
-from .EXT_SampleDiffusion import AudioInference, SaveAudio, LoadAudio, PreviewAudioFile, PreviewAudioTensor, StringListIndex, LoadAudioModelDD, MergeTensors, AudioIndex
-from .EXT_Spectrology import ImageToSpectral, Plot_Spectrogram
-from .EXT_VariationUtils import SliceAudio, BatchToList, LoadAudioDir, ListToBatch, ConcatAudioList, GetSingle, BulkVariation
-from .EXT_WaveGen import WaveGenerator
+from AudioManipulation import JoinAudio, BatchJoinAudio, LayerAudio, CutAudio, DuplicateAudio, StretchAudio, ReverseAudio, ResampleAudio, SeparatePercussion
+from PedalBoard import ( OTT, LoadVST, BitCrushEffect, ChorusEffect, ClippingEffect, CompressorEffect, ConvolutionEffect, DelayEffect, DistortionEffect,GainEffect, InvertEffect, LimiterEffect, MP3CompressorEffect, NoiseGateEffect, PitchShiftEffect, PhaserEffect, ReverbEffect, HighShelfFilterEffect, HighpassFilterEffect, LadderFilterEffect, LowShelfFilterEffect, LowpassFilterEffect, PeakFilterEffect  )
+from SampleDiffusion import AudioInference, SaveAudio, LoadAudio, PreviewAudioFile, PreviewAudioTensor, StringListIndex, LoadAudioModelDD, MergeTensors, AudioIndex
+from Spectrology import ImageToSpectral, Plot_Spectrogram
+from VariationUtils import SliceAudio, BatchToList, LoadAudioDir, ListToBatch, ConcatAudioList, GetSingle, BulkVariation
+from WaveGen import WaveGenerator
 
 
 NODE_CLASS_MAPPINGS = {
