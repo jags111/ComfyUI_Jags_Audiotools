@@ -1,8 +1,15 @@
 # only import if running as a custom node
+"""
+@author: jags111
+@title: Jags_Audiotools
+@nickname: Audiotools
+@description: This extension offers various audio generation tools
+"""
 import sys, os, shutil
 import importlib
 import utils
 import folder_paths
+import traceback
 
 custom_nodes_path = os.path.join(folder_paths.base_path, "custom_nodes")
 SampleDiffusion_path = os.path.join(custom_nodes_path, "ComfyUI_Jags_Audiotools")
