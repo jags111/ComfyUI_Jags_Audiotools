@@ -115,36 +115,6 @@ class BatchJoinAudio:
             joined_tensor[:, :, sample_start:sample_end] += sample
 
         return joined_tensor, sample_rate
-
-
-class LayerAudio:
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "tensor_1": ("AUDIO", ),
-                "tensor_2": ("AUDIO", ),
-                "weight_1": ("FLOAT", {"default": 1.0, "min": -1e9, "max": 1e9, "step": 1}),
-                "weight_2": ("FLOAT", {"default": 1.0, "min": -1e9, "max": 1e9, "step": 1})
-                },
-            "optional": {
-                "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1, "forceInput": True}),
-                },
-            }
-
-    RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
-    FUNCTION = "layer_audio"
-
-    CATEGORY = "Audio/Arrangement"
-
-    def layer_audio(self, tensor_1, tensor_2, weight_1, weight_2, sample_rate):
-        layered_length = max(tensor_1.size(2), tensor_2.size(2))
-        layered_tensor = torch.zeros((tensor_1.size(0), tensor_1.size(1), layered_length), device=tensor_1.device)
-        layered_tensor[:, :, :tensor_1.size(2)] += tensor_1 * weight_1
-        layered_tensor[:, :, :tensor_2.size(2)] += tensor_2 * weight_2
-
-        return layered_tensor, sample_rate
     
 
 class CutAudio:
@@ -192,6 +162,7 @@ class DuplicateAudio:
 
     def duplicate_audio(self, tensor, count, sample_rate):
         return tensor.repeat(count, 1, 1), sample_rate
+
 
 # ------------------
 # AUDIO MANIPULATION
@@ -253,11 +224,10 @@ class ResampleAudio:
         return {
             "required": {
                 "tensor": ("AUDIO",),
+                "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1}),
                 "sample_rate_target": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1}),
             },
-            "optional": {
-                "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1, "forceInput": True}),
-            },
+            "optional": {},
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
@@ -268,41 +238,12 @@ class ResampleAudio:
 
     def resample_audio(self, tensor, sample_rate, sample_rate_target):
         y = tensor.cpu().numpy()
-        y = librosa.resample(y, orig_sr=sample_rate, target_sr=sample_rate_target)
+        y = librosa.resample(y, sample_rate, sample_rate_target)
         tensor_out = torch.from_numpy(y).to(device=tensor.device)
 
         return tensor_out, sample_rate_target
 
 
-class SeparatePercussion:
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "tensor": ("AUDIO",),
-                "kernel_size": ("INT", {"default": 31, "min": 1, "max": 1e9, "step": 1}),
-                "power": ("FLOAT", {"default": 2.0, "min": 0, "max": 1e9, "step": 0.1}),
-                "margin": ("FLOAT", {"default": 1.0, "min": 0, "max": 1e9, "step": 0.1})
-
-            },
-            "optional": {
-                "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1, "forceInput": True}),
-            },
-        }
-
-    RETURN_TYPES = ("AUDIO", "AUDIO", "INT")
-    RETURN_NAMES = ("harmonic_tensor", "percussion_tensor", "sample_rate")
-    FUNCTION = "separate_audio"
-
-    CATEGORY = "Audio/Manipulation"
-
-    def separate_audio(self, tensor, kernel_size, power, margin, sample_rate):
-        y = tensor.cpu().numpy()
-        h, p = librosa.effects.hpss(y, kernel_size=kernel_size, power=power, margin=margin)
-        harmonic_tensor = torch.from_numpy(h).to(device=tensor.device)
-        percussion_tensor = torch.from_numpy(p).to(device=tensor.device)
-
-        return harmonic_tensor, percussion_tensor, sample_rate
 
 # --------
 # ENVELOPE
@@ -312,11 +253,9 @@ class SeparatePercussion:
 NODE_CLASS_MAPPINGS = {
     'JoinAudio': JoinAudio,
     'BatchJoinAudio': BatchJoinAudio,
-    'LayerAudio': LayerAudio,
     'CutAudio': CutAudio,
     'DuplicateAudio': DuplicateAudio,
     'StretchAudio': StretchAudio,
     'ReverseAudio': ReverseAudio,
-    'ResampleAudio': ResampleAudio,
-    'SeparatePercussion': SeparatePercussion
+    'ResampleAudio': ResampleAudio
 }
