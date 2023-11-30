@@ -151,7 +151,7 @@ print('*ComfyUI_Jags_Audiotools- nodes_loaded*')
 print('--------------')
 
 #__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
-__ALL__ = [NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS, CC_VERSION]
+__ALL__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS', 'CC_VERSION']
 
 #      NODE_CLASS_MAPPINGS.update(node_import.NODE_CLASS_MAPPINGS)
 
