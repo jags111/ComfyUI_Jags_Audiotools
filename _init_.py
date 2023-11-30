@@ -16,7 +16,8 @@ from SampleDiffusion import AudioInference, SaveAudio, LoadAudio, PreviewAudioFi
 from Spectrology import ImageToSpectral, Plot_Spectrogram
 from VariationUtils import SliceAudio, BatchToList, LoadAudioDir, ListToBatch, ConcatAudioList, GetSingle, BulkVariation
 from WaveGen import WaveGenerator
-
+from AudioManipulation import JoinAudio, BatchJoinAudio, CutAudio, DuplicateAudio, StretchAudio, ReverseAudio, ResampleAudio
+from VariationUtils import SliceAudio, BatchToList, ConcatAudioList, SequenceVariation
 
 NODE_CLASS_MAPPINGS = {
     
@@ -53,7 +54,6 @@ NODE_CLASS_MAPPINGS = {
  "LowShelfFilter": LowShelfFilterEffect,
  "LowpassFilter": LowpassFilterEffect,
  "PeakFilter": PeakFilterEffect, 
-
   "GenerateAudioSample": AudioInference,
   "SaveAudioTensor": SaveAudio,
   "LoadAudioFile": LoadAudio,
@@ -63,10 +63,8 @@ NODE_CLASS_MAPPINGS = {
   "LoadAudioModel (DD)": LoadAudioModelDD,
   "MixAudioTensors": MergeTensors,
   "GetAudioFromFolderIndex": AudioIndex, 
-
   "ImageToSpectral": ImageToSpectral,
   "PlotSpectrogram": Plot_Spectrogram,
-
   "SliceAudio": SliceAudio,
   "BatchToList": BatchToList,
   "LoadAudioDir": LoadAudioDir,
@@ -74,69 +72,64 @@ NODE_CLASS_MAPPINGS = {
   "ConcatAudioList": ConcatAudioList,
   "GetSingle": GetSingle,
   "BulkVariation": BulkVariation,
-  
-  "GenerateAudioWave": WaveGenerator
+  "GenerateAudioWave": WaveGenerator,
+  "SequenceVariation": SequenceVariation
 
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
- "JoinAudio": JoinAudio, 
- "BatchJoinAudio": BatchJoinAudio,
- "LayerAudio": LayerAudio,
- "CutAudio": CutAudio,
- "DuplicateAudio": DuplicateAudio,
- "StretchAudio": StretchAudio,
- "ReverseAudio": ReverseAudio,
- "ResampleAudio": ResampleAudio,
- "SeparatePercussion": SeparatePercussion,
-
- "OTTAudioFX": OTT,
- "LoadVST3": LoadVST,
- "BitCrushAudioFX": BitCrushEffect,
- "ChorusAudioFX": ChorusEffect,
- "ClippingAudioFX": ClippingEffect,
- "CompressorAudioFX": CompressorEffect,
- "ConvolutionAudioFX": ConvolutionEffect,
- "DelayAudioFX": DelayEffect,
- "DistortionAudioFX": DistortionEffect,
- "GainAudioFX": GainEffect,
- "InvertAudioFX": InvertEffect,
- "LimiterAudioFX": LimiterEffect,
- "MP3CompressorAudioFX": MP3CompressorEffect,
- "NoiseGateAudioFX": NoiseGateEffect,
- "PitchShiftAudioFX": PitchShiftEffect,
- "PhaserEffectAudioFX": PhaserEffect,
- "ReverbAudioFX": ReverbEffect,
- "HighShelfFilter": HighShelfFilterEffect,
- "HighpassFilter": HighpassFilterEffect,
- "LadderFilter": LadderFilterEffect,
- "LowShelfFilter": LowShelfFilterEffect,
- "LowpassFilter": LowpassFilterEffect,
- "PeakFilter": PeakFilterEffect, 
-
-  "GenerateAudioSample": AudioInference,
-  "SaveAudioTensor": SaveAudio,
-  "LoadAudioFile": LoadAudio,
-  "PreviewAudioFile": PreviewAudioFile,
-  "PreviewAudioTensor": PreviewAudioTensor,
-  "GetStringByIndex": StringListIndex,
-  "LoadAudioModel (DD)": LoadAudioModelDD,
-  "MixAudioTensors": MergeTensors,
-  "GetAudioFromFolderIndex": AudioIndex, 
-
-  "ImageToSpectral": ImageToSpectral,
-  "PlotSpectrogram": Plot_Spectrogram,
-
-  "SliceAudio": SliceAudio,
-  "BatchToList": BatchToList,
-  "LoadAudioDir": LoadAudioDir,
-  "ListToBatch": ListToBatch,
-  "ConcatAudioList": ConcatAudioList,
-  "GetSingle": GetSingle,
-  "BulkVariation": BulkVariation,
-  
-  "GenerateAudioWave": WaveGenerator
-    
+ "JoinAudio": "JoinAudio", 
+ "BatchJoinAudio": "BatchJoinAudio",
+ "LayerAudio": "LayerAudio",
+ "CutAudio": "CutAudio",
+ "DuplicateAudio": "DuplicateAudio",
+ "StretchAudio": "StretchAudio",
+ "ReverseAudio": "ReverseAudio",
+ "ResampleAudio": "ResampleAudio",
+ "SeparatePercussion": "SeparatePercussion",
+ "OTTAudioFX": "OTT",
+ "LoadVST3": "LoadVST",
+ "BitCrushAudioFX": "BitCrushEffect",
+ "ChorusAudioFX": "ChorusEffect",
+ "ClippingAudioFX": "ClippingEffect",
+ "CompressorAudioFX": "CompressorEffect",
+ "ConvolutionAudioFX": "ConvolutionEffect",
+ "DelayAudioFX": "DelayEffect",
+ "DistortionAudioFX": "DistortionEffect",
+ "GainAudioFX": "GainEffect",
+ "InvertAudioFX": "InvertEffect",
+ "LimiterAudioFX": "LimiterEffect",
+ "MP3CompressorAudioFX": "MP3CompressorEffect",
+ "NoiseGateAudioFX": "NoiseGateEffect",
+ "PitchShiftAudioFX": "PitchShiftEffect",
+ "PhaserEffectAudioFX": "PhaserEffect",
+ "ReverbAudioFX": "ReverbEffect",
+ "HighShelfFilter": "HighShelfFilterEffect",
+ "HighpassFilter": "HighpassFilterEffect",
+ "LadderFilter": "LadderFilterEffect",
+ "LowShelfFilter": "LowShelfFilterEffect",
+ "LowpassFilter": "LowpassFilterEffect",
+ "PeakFilter": "PeakFilterEffect", 
+  "GenerateAudioSample": "AudioInference",
+  "SaveAudioTensor": "SaveAudio",
+  "LoadAudioFile": "LoadAudio",
+  "PreviewAudioFile": "PreviewAudioFile",
+  "PreviewAudioTensor": "PreviewAudioTensor",
+  "GetStringByIndex": "StringListIndex",
+  "LoadAudioModel (DD)": "LoadAudioModelDD",
+  "MixAudioTensors": "MergeTensors",
+  "GetAudioFromFolderIndex": "AudioIndex", 
+  "ImageToSpectral": "ImageToSpectral",
+  "PlotSpectrogram": "Plot_Spectrogram",
+  "SliceAudio": "SliceAudio",
+  "BatchToList": "BatchToList",
+  "LoadAudioDir": "LoadAudioDir",
+  "ListToBatch": "ListToBatch",
+  "ConcatAudioList": "ConcatAudioList",
+  "GetSingle": "GetSingle",
+  "BulkVariation": "BulkVariation",
+  "GenerateAudioWave": "WaveGenerator",
+  "SequenceVariation": "SequenceVariation" 
 }
 CC_VERSION = 1.0
 
