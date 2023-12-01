@@ -1,11 +1,16 @@
 # Imports
-from server import PromptServer
-from aiohttp import web
+
 import subprocess, sys, os
 import torch
 import random
+from pathlib import Path 
+
+
+from server import PromptServer
+from aiohttp import web
 from folder_paths import models_dir, get_filename_list
-from comfy.model_management import get_torch_device
+from model_management import get_torch_device
+
 import importlib
 import yaml
 
@@ -114,12 +119,12 @@ libs = os.path.join(comfy_dir, 'custom_nodes/SampleDiffusion/libs')
 if not os.path.exists(os.path.join(comfy_dir, libs)):
     os.system(f'git clone https://github.com/sudosilico/sample-diffusion.git {os.path.join(comfy_dir, libs)}')
 sys.path.append(os.path.join(comfy_dir, libs ))
-from libs.sample_generator.util.util import load_audio, crop_audio
-from libs.sample_generator.dance_diffusion.api import RequestHandler, Request, ModelType
-from libs.sample_generator.diffusion_library.sampler import SamplerType
-from libs.sample_generator.diffusion_library.scheduler import SchedulerType
-from libs.sample_generator.dance_diffusion.dd.model import DDModelWrapper
-from libs.sample_generator.dance_diffusion.dd.inference import DDInference
+from util.util import load_audio, crop_audio
+from dance_diffusion.api import RequestHandler, Request, ModelType
+from diffusion_library.sampler import SamplerType
+from diffusion_library.scheduler import SchedulerType
+from dance_diffusion.dd.model import DDModelWrapper
+from dance_diffusion.dd.inference import DDInference
 
 def save_audio(audio_out, output_path: str, sample_rate, id_str:str = None):
     out_files = []
@@ -534,5 +539,16 @@ NODE_CLASS_MAPPINGS = {
     "LoadAudioModel (DD)": LoadAudioModelDD,
     "MixAudioTensors": MergeTensors,
     "GetAudioFromFolderIndex": AudioIndex,
+}
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "GenerateAudioSample": "Jags-AudioInference",
+    "SaveAudioTensor": "Jags_SaveAudio",
+    "LoadAudioFile": "Jags_LoadAudio",
+    "PreviewAudioFile": "Jags_PreviewAudioFile",
+    "PreviewAudioTensor": "Jags_PreviewAudioTensor",
+    "GetStringByIndex": "Jags_StringListIndex",
+    "LoadAudioModel (DD)": "Jags_LoadAudioModelDD",
+    "MixAudioTensors": "Jags_MergeTensors",
+    "GetAudioFromFolderIndex": "Jags_AudioIndex",
 }
 
