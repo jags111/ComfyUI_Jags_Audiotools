@@ -45,7 +45,19 @@ But the best method is to install same from ComfyUI Manager (https://github.com/
 
 Place models in ComfyUI/models/audio_diffusion ('model_folder' entry in config.yaml is accepted).
 
-(Optional) Install xfer OTT VST3 from the website link [xfer OTT](https://xferrecords.com/freeware)
+(Optional) Install xfer OTT VST3 from the website link [xfer OTT](https://xferrecords.com/freeware) <br>
+
+**Link to the model collections:**
+
+There are also a whole bunch of community-trained models on the :<a href =" https://discord.com/channels/1001555636569509948/1025191039352438794"> *Harmonai discord*</a> <br>
+
+The original models from zqevans can be found in the <a href = "https://github.com/Harmonai-org/sample-generator/blob/main/Dance_Diffusion.ipynb">**Dance Diffusion notebook**</a> <br>
+
+Most of the models are available for download from Huggingface page and it is easy to download same.
+<a href = "https://huggingface.co/harmonai"> **Huggingface-Harmonai**</a> <br>
+
+
+
 
 ## Todo
 
