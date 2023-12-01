@@ -704,8 +704,30 @@ NODE_CLASS_MAPPINGS = {
     "LadderFilter": LadderFilterEffect,
     "LowShelfFilter": LowShelfFilterEffect,
     "LowpassFilter": LowpassFilterEffect,
-    "PeakFilter": PeakFilterEffect,
-
-
-
+    "PeakFilter": PeakFilterEffect
+}
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "OTTAudioFX": "OTT",
+    "LoadVST3": "Load VST3",
+    "BitCrushAudioFX": "Bit Crush",
+    "ChorusAudioFX": "Chorus",
+    "ClippingAudioFX": "Clipping",
+    "CompressorAudioFX": "Compressor",
+    "ConvolutionAudioFX": "Convolution",
+    "DelayAudioFX": "Delay",
+    "DistortionAudioFX": "Distortion",
+    "GainAudioFX": "Gain",
+    "InvertAudioFX": "Invert",
+    "LimiterAudioFX": "Limiter",
+    "MP3CompressorAudioFX": "MP3 Compressor",
+    "NoiseGateAudioFX": "Noise Gate",
+    "PitchShiftAudioFX": "Pitch Shift",
+    "PhaserEffectAudioFX": "Phaser",
+    "ReverbAudioFX": "Reverb",
+    "HighShelfFilter": "High Shelf Filter",
+    "HighpassFilter": "Highpass Filter",
+    "LadderFilter": "Ladder Filter",
+    "LowShelfFilter": "Low Shelf Filter",
+    "LowpassFilter": "Lowpass Filter",
+    "PeakFilter": "Peak Filter"
 }
