@@ -7,37 +7,39 @@
 """
 import sys, os, shutil
 import importlib
-import utils
-import folder_paths
 import traceback
+import json
+
+import folder_paths
 
 custom_nodes_path = os.path.join(folder_paths.base_path, "custom_nodes")
-SampleDiffusion_path = os.path.join(custom_nodes_path, "ComfyUI_Jags_Audiotools")
+ComfyUI_Jags_Audiotools_path = os.path.join(custom_nodes_path, "ComfyUI_Jags_Audiotools")
 sys.path.append(ComfyUI_Jags_Audiotools_path)
 
 # from .server import server
 
-from AudioManipulation import JoinAudio, BatchJoinAudio, LayerAudio, CutAudio, DuplicateAudio, StretchAudio, ReverseAudio, ResampleAudio, SeparatePercussion
-from PedalBoard import ( OTT, LoadVST, BitCrushEffect, ChorusEffect, ClippingEffect, CompressorEffect, ConvolutionEffect, DelayEffect, DistortionEffect,GainEffect, InvertEffect, LimiterEffect, MP3CompressorEffect, NoiseGateEffect, PitchShiftEffect, PhaserEffect, ReverbEffect, HighShelfFilterEffect, HighpassFilterEffect, LadderFilterEffect, LowShelfFilterEffect, LowpassFilterEffect, PeakFilterEffect  )
-from SampleDiffusion import AudioInference, SaveAudio, LoadAudio, PreviewAudioFile, PreviewAudioTensor, StringListIndex, LoadAudioModelDD, MergeTensors, AudioIndex
-from Spectrology import ImageToSpectral, Plot_Spectrogram
-from VariationUtils import SliceAudio, BatchToList, LoadAudioDir, ListToBatch, ConcatAudioList, GetSingle, BulkVariation
-from WaveGen import WaveGenerator
-from AudioManipulation import JoinAudio, BatchJoinAudio, CutAudio, DuplicateAudio, StretchAudio, ReverseAudio, ResampleAudio
-from VariationUtils import SliceAudio, BatchToList, ConcatAudioList, SequenceVariation
+#from AudioManipulation import JoinAudio, BatchJoinAudio, CutAudio, DuplicateAudio, StretchAudio, ReverseAudio, ResampleAudio
+#from PedalBoard import ( OTT, LoadVST, BitCrushEffect, ChorusEffect, ClippingEffect, CompressorEffect, ConvolutionEffect, DelayEffect, DistortionEffect,GainEffect, InvertEffect, LimiterEffect, MP3CompressorEffect, NoiseGateEffect, PitchShiftEffect, PhaserEffect, ReverbEffect, HighShelfFilterEffect, HighpassFilterEffect, LadderFilterEffect, LowShelfFilterEffect, LowpassFilterEffect, PeakFilterEffect  )
+#from SampleDiffusion import *
+#from Spectrology import ImageToSpectral, Plot_Spectrogram
+#from VariationUtils import SliceAudio, BatchToList, ConcatAudioList,SequenceVariation
+#from WaveGen import WaveGenerator
 
+module_js_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "js")
+application_root_directory = os.path.dirname(folder_paths.__file__)
+extension_web_extensions_directory = os.path.join(application_root_directory, "web", "extensions", "comfyui_jags_audiotools")
+shutil.copytree(module_js_directory, extension_web_extensions_directory, dirs_exist_ok=True)
+
+"""
 NODE_CLASS_MAPPINGS = {
     
  "JoinAudio": JoinAudio, 
  "BatchJoinAudio": BatchJoinAudio,
- "LayerAudio": LayerAudio,
- "CutAudio": CutAudio,
+  "CutAudio": CutAudio,
  "DuplicateAudio": DuplicateAudio,
  "StretchAudio": StretchAudio,
  "ReverseAudio": ReverseAudio,
- "ResampleAudio": ResampleAudio,
- "SeparatePercussion": SeparatePercussion,
-
+ "ResampleAudio": ResampleAudio, 
  "OTTAudioFX": OTT,
  "LoadVST3": LoadVST,
  "BitCrushAudioFX": BitCrushEffect,
@@ -73,12 +75,8 @@ NODE_CLASS_MAPPINGS = {
   "ImageToSpectral": ImageToSpectral,
   "PlotSpectrogram": Plot_Spectrogram,
   "SliceAudio": SliceAudio,
-  "BatchToList": BatchToList,
-  "LoadAudioDir": LoadAudioDir,
-  "ListToBatch": ListToBatch,
-  "ConcatAudioList": ConcatAudioList,
-  "GetSingle": GetSingle,
-  "BulkVariation": BulkVariation,
+  "BatchToList": BatchToList,  
+  "ConcatAudioList": ConcatAudioList,  
   "GenerateAudioWave": WaveGenerator,
   "SequenceVariation": SequenceVariation
 
@@ -87,13 +85,11 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
  "JoinAudio": "JoinAudio", 
  "BatchJoinAudio": "BatchJoinAudio",
- "LayerAudio": "LayerAudio",
- "CutAudio": "CutAudio",
+  "CutAudio": "CutAudio",
  "DuplicateAudio": "DuplicateAudio",
  "StretchAudio": "StretchAudio",
  "ReverseAudio": "ReverseAudio",
- "ResampleAudio": "ResampleAudio",
- "SeparatePercussion": "SeparatePercussion",
+ "ResampleAudio": "ResampleAudio", 
  "OTTAudioFX": "OTT",
  "LoadVST3": "LoadVST",
  "BitCrushAudioFX": "BitCrushEffect",
@@ -129,15 +125,14 @@ NODE_DISPLAY_NAME_MAPPINGS = {
   "ImageToSpectral": "ImageToSpectral",
   "PlotSpectrogram": "Plot_Spectrogram",
   "SliceAudio": "SliceAudio",
-  "BatchToList": "BatchToList",
-  "LoadAudioDir": "LoadAudioDir",
-  "ListToBatch": "ListToBatch",
-  "ConcatAudioList": "ConcatAudioList",
-  "GetSingle": "GetSingle",
-  "BulkVariation": "BulkVariation",
+  "BatchToList": "BatchToList",  
+  "ConcatAudioList": "ConcatAudioList",  
   "GenerateAudioWave": "WaveGenerator",
   "SequenceVariation": "SequenceVariation" 
 }
+"""
+NODE_CLASS_MAPPINGS = {}
+NODE_DISPLAY_NAME_MAPPINGS = {}
 CC_VERSION = 1.0
 
 
@@ -151,7 +146,15 @@ print('*ComfyUI_Jags_Audiotools- nodes_loaded*')
 print('--------------')
 
 #__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
+
 __ALL__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS', 'CC_VERSION']
 
+for node in os.listdir(os.path.dirname(__file__)):
+    if node.startswith('EXT_'):
+        node = node.split('.')[0]
+        node_import = importlib.import_module('custom_nodes.ComfyUI_Jags_Audiotools.' + node)
+        # get class node mappings from py file
+        NODE_CLASS_MAPPINGS.update(node_import.NODE_CLASS_MAPPINGS)
+        NODE_DISPLAY_NAME_MAPPINGS.update(node_import.NODE_DISPLAY_NAME_MAPPINGS)
 #      NODE_CLASS_MAPPINGS.update(node_import.NODE_CLASS_MAPPINGS)
 
