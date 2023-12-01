@@ -60,7 +60,7 @@ function addPlaybackWidget(node, name, url) {
 }
 
 app.registerExtension({
-	name: "pysssss.PlayAudio",
+	name: "jags.PlayAudio",
 	async beforeRegisterNodeDef(nodeType, nodeData, app) {
 		const AudioPreviews = ["PreviewAudioFile", "PreviewAudioTensor"]
 		if (AudioPreviews.includes(nodeData.name)) {
@@ -97,7 +97,7 @@ app.registerExtension({
 						// Wrap file in formdata so it includes filename
 						const body = new FormData();
 						body.append("file", file);
-						const resp = await fetch("/samplediffusion/upload/audio", {
+						const resp = await fetch("/ComfyUI_Jags_Audiotools/upload/audio", {
 							method: "POST",
 							body,
 						});
@@ -111,7 +111,7 @@ app.registerExtension({
 						if (resp.status === 200) {
 							const { name } = await resp.json();
 							pathWidget.value = name;
-							addPlaybackWidget(node, name, `/samplediffusion/audio?filename=${encodeURIComponent(name)}`)
+							addPlaybackWidget(node, name, `/ComfyUI_Jags_Audiotools/audio?filename=${encodeURIComponent(name)}`)
 						} else {
 							alert(resp.status + " - " + resp.statusText);
 						}
