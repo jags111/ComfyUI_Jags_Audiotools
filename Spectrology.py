@@ -184,28 +184,6 @@ NODE_CLASS_MAPPINGS = {
     'PlotSpectrogram': Plot_Spectrogram,
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def convert(inpt, output, minfreq, maxfreq, pxs, wavrate, rotate, invert):
     img = Image.open(inpt).convert('L')
 
