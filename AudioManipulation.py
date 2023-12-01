@@ -259,3 +259,12 @@ NODE_CLASS_MAPPINGS = {
     'ReverseAudio': ReverseAudio,
     'ResampleAudio': ResampleAudio
 }
+NODE_DISPLAY_NAME_MAPPINGS = {
+    'JoinAudio': 'Jags_JoinAudio',
+    'BatchJoinAudio': 'Jags_BatchJoinAudio',
+    'CutAudio': 'Jags_CutAudio',
+    'DuplicateAudio': 'Jags_DuplicateAudio',
+    'StretchAudio': 'Jags_StretchAudio',
+    'ReverseAudio': 'Jags_ReverseAudio',
+    'ResampleAudio': 'Jags_ResampleAudio'
+}
