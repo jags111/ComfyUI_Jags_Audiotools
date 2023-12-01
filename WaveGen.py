@@ -90,3 +90,6 @@ class WaveGenerator():
 NODE_CLASS_MAPPINGS = {
     "GenerateAudioWave": WaveGenerator
 }
+NODE_CLASS_NAMES = {
+    "GenerateAudioWave": "Jags_Wave Generator"
+}
