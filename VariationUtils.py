@@ -1,9 +1,9 @@
 import torch
 import numpy as np
 
-from custom_nodes.SampleDiffusion.EXT_SampleDiffusion import AudioInference
-from diffusion_library.sampler import SamplerType
-from diffusion_library.scheduler import SchedulerType
+from SampleDiffusion import AudioInference
+from libs.sample_generator.diffusion_library.sampler import SamplerType
+from libs.sample_generator.diffusion_library.scheduler import SchedulerType
 
 
 # Split up audio into a sequence of smaller clips (represented as a 4d tensor) to be processed individually
@@ -134,4 +134,10 @@ NODE_CLASS_MAPPINGS = {
     'BatchToList': BatchToList,
     'ConcatAudioList': ConcatAudioList,
     'SequenceVariation': SequenceVariation
+}
+NODE_DISPLAY_NAME_MAPPINGS = {
+    'SliceAudio': 'Jags_SliceAudio',
+    'BatchToList': 'Jags_BatchToList',
+    'ConcatAudioList': 'Jags_ConcatAudioList',
+    'SequenceVariation': 'Jags_SequenceVariation'
 }
