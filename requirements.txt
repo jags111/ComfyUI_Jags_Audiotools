@@ -7,3 +7,10 @@ torch
 torchaudio
 tqdm
 wandb
+matplotlib
+torchvision
+k-diffusion
+PySoundFile
+black
+diffusers
+v-diffusion-pytorch
