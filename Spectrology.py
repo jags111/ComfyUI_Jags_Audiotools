@@ -177,13 +177,6 @@ class ImageToSpectral():
         return (audio_output, audio_total, sample_rate)
 
 
-
-
-NODE_CLASS_MAPPINGS = {
-    'ImageToSpectral': ImageToSpectral,
-    'PlotSpectrogram': Plot_Spectrogram,
-}
-
 def convert(inpt, output, minfreq, maxfreq, pxs, wavrate, rotate, invert):
     img = Image.open(inpt).convert('L')
 
@@ -235,3 +228,12 @@ def genwave(frequency, amplitude, samples, samplerate):
         a.append(int(math.floor(x)))
     return a
 
+NODE_CLASS_MAPPINGS = {
+    'ImageToSpectral': ImageToSpectral,
+    'PlotSpectrogram': Plot_Spectrogram,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    'ImageToSpectral': 'Jags Image To Spectral',
+    'PlotSpectrogram': 'Jags Plot Spectrogram',
+}
