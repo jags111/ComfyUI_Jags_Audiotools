@@ -46,7 +46,7 @@ def get_comfy_dir():
 PromptServer.instance.app._client_max_size = 250 * 1024 * 1024 #  250 MB
 
 # Add route for uploading audio, duplicates image upload but to audio_input
-@PromptServer.instance.routes.post("/samplediffusion/upload/audio")
+@PromptServer.instance.routes.post("/ComfyUI_Jags_Audiotools/upload/audio")
 async def upload_audio(request):
     upload_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "audio_input")
 
@@ -74,7 +74,7 @@ async def upload_audio(request):
         return web.Response(status=400)
 
 # Add route for getting audio, duplicates view image but allows audio_input
-@PromptServer.instance.routes.get("/samplediffusion/audio")
+@PromptServer.instance.routes.get("/ComfyUI_Jags_Audiotools/audio")
 async def view_image(request):
     if "filename" in request.rel_url.query:
         type = request.rel_url.query.get("type", "audio_input")
@@ -113,18 +113,19 @@ models_folder = config["model_folder"]
 
 
 comfy_dir = get_comfy_dir()   
-if not os.path.exists(os.path.join(comfy_dir, 'custom_nodes/SampleDiffusion/libs')):
-    os.makedirs(os.path.join(comfy_dir, 'custom_nodes/SampleDiffusion/libs'))
-libs = os.path.join(comfy_dir, 'custom_nodes/SampleDiffusion/libs') 
+#if not os.path.exists(os.path.join(comfy_dir, 'custom_nodes/ComfyUI_Jags_Audiotools/libs')):
+    #os.makedirs(os.path.join(comfy_dir, 'custom_nodes/ComfyUI_Jags_Audiotools/libs'))
+libs = os.path.join(comfy_dir, 'custom_nodes/ComfyUI_Jags_Audiotools/libs') 
 if not os.path.exists(os.path.join(comfy_dir, libs)):
-    os.system(f'git clone https://github.com/sudosilico/sample-diffusion.git {os.path.join(comfy_dir, libs)}')
+    os.system (os.path.join(comfy_dir, libs))
 sys.path.append(os.path.join(comfy_dir, libs ))
-from util.util import load_audio, crop_audio
-from dance_diffusion.api import RequestHandler, Request, ModelType
-from diffusion_library.sampler import SamplerType
-from diffusion_library.scheduler import SchedulerType
-from dance_diffusion.dd.model import DDModelWrapper
-from dance_diffusion.dd.inference import DDInference
+
+from libs.util.util import load_audio, crop_audio
+from libs.dance_diffusion.api import RequestHandler, Request, ModelType
+from libs.diffusion_library.sampler import SamplerType
+from libs.diffusion_library.scheduler import SchedulerType
+from libs.dance_diffusion.dd.model import DDModelWrapper
+from libs.dance_diffusion.dd.inference import DDInference
 
 def save_audio(audio_out, output_path: str, sample_rate, id_str:str = None):
     out_files = []
@@ -190,7 +191,7 @@ class AudioInference():
     RETURN_NAMES = ("out_paths", "tensor", "sample_rate")
     FUNCTION = "do_sample"
 
-    CATEGORY = "Audio/SampleDiffusion"
+    CATEGORY = "Audio/ComfyUI_Jags_Audiotools"
 
     def do_sample(self, audio_model, mode, batch_size, steps, sampler, sigma_min, sigma_max, rho, scheduler, input_audio_path='', input_tensor=None, noise_level=0.7, seed=-1):
 
@@ -295,7 +296,7 @@ class SaveAudio():
 
 class LoadAudio():
     def __init__(self):
-        self.input_audio = os.listdir(f'{comfy_dir}/custom_nodes/SampleDiffusion/audio_input')
+        self.input_audio = os.listdir(f'{comfy_dir}/custom_nodes/ComfyUI_Jags_Audiotools/audio_input')
     
     @classmethod
     def INPUT_TYPES(cls):
@@ -323,7 +324,7 @@ class LoadAudio():
             waveform, samplerate = None, None
             return (file_path, samplerate, waveform)
 
-        file_path = f'{comfy_dir}/custom_nodes/SampleDiffusion/audio_input/{file_path}'
+        file_path = f'{comfy_dir}/custom_nodes/ComfyUI_Jags_Audiotools/audio_input/{file_path}'
 
         if file_path.endswith('.mp3'):
             if os.path.exists(file_path.replace('.mp3', '')+'.wav'):
@@ -367,7 +368,7 @@ class LoadAudioModelDD():
     FUNCTION = "DoLoadAudioModelDD"
     OUTPUT_NODE = True
 
-    CATEGORY = "Audio/SampleDiffusion"
+    CATEGORY = "Audio/ComfyUI_Jags_Audiotools"
 
     def DoLoadAudioModelDD(self, model, chunk_size, sample_rate, optimize_memory_use, autocast):
         global models_folder
