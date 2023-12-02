@@ -24,7 +24,7 @@ Includes a couple of  helper functions.
 
 ### Example Work flow
 
-images/2023-12-03_01-23-48.png
+<img src = images/2023-12-03_01-23-48.png >
 
 
 ### ComfyUI_Jags_Audiotools- WIKI
