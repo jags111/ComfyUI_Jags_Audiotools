@@ -1,11 +1,16 @@
-import { app } from "/scripts/app.js";
-import { api } from '../../../scripts/api.js'
-import { ComfyWidgets } from '../../../scripts/widgets.js'
-import { $el } from '../../../scripts/ui.js'
+/**
+ * File: playAudio.js
+ * Project: comfyui_jags_audiotools
+ * Author: jags111
+ *
+ * Copyright (c) 2023 jags111
+ *
+ */
+import { api } from "../../scripts/api.js";
+import { app } from '../../scripts/app.js';
+import { ComfyWidgets } from "../../scripts/widgets.js";
+import { ComfyDialog, $el } from "../../scripts/ui.js";
 
-let api_host = '127.0.0.1:8188'
-let api_base = ''
-let url = `http://${api_host}${api_base}`
 
 /* 
 A method that returns the required style for the html 
@@ -59,8 +64,9 @@ function addPlaybackWidget(node, name, url) {
 	});
 }
 
+
 app.registerExtension({
-	name: "jags.PlayAudio",
+	name: "Jags.PlayAudio",
 	async beforeRegisterNodeDef(nodeType, nodeData, app) {
 		const AudioPreviews = ["PreviewAudioFile", "PreviewAudioTensor"]
 		if (AudioPreviews.includes(nodeData.name)) {
@@ -97,7 +103,7 @@ app.registerExtension({
 						// Wrap file in formdata so it includes filename
 						const body = new FormData();
 						body.append("file", file);
-						const resp = await fetch("/ComfyUI_Jags_Audiotools/upload/audio", {
+						const resp = await fetch("/Audiotools/upload/audio", {
 							method: "POST",
 							body,
 						});
@@ -111,7 +117,7 @@ app.registerExtension({
 						if (resp.status === 200) {
 							const { name } = await resp.json();
 							pathWidget.value = name;
-							addPlaybackWidget(node, name, `/ComfyUI_Jags_Audiotools/audio?filename=${encodeURIComponent(name)}`)
+							addPlaybackWidget(node, name, `/Audiotools/upload/audio?filename=${encodeURIComponent(name)}`)
 						} else {
 							alert(resp.status + " - " + resp.statusText);
 						}
@@ -124,7 +130,7 @@ app.registerExtension({
 				const fileInput = document.createElement("input");
 				Object.assign(fileInput, {
 					type: "file",
-					accept: "audio/mpeg,audio/wav,audio/x-wav",
+					accept: "audio/mpeg,audio/wav,audio/x-wav,audio/mp3",
 					style: "display: none",
 					onchange: async () => {
 						if (fileInput.files.length) {
