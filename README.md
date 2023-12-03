@@ -40,7 +40,7 @@ Includes a couple of  helper functions.
 
 ### ComfyUI_Jags_Audiotools- WIKI
 
-Link to the workflow and explanations :  **WIKI** 
+Link to the workflow and explanations : <a href ="https://github.com/jags111/ComfyUI_Jags_Audiotools/wiki"> **AUDIO TOOLS WIKI** </a>
 
 ### Dependencies
 
