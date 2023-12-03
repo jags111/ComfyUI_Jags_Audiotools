@@ -118,4 +118,6 @@ Support us in Patreon for more future models and new versions of AI notebooks.
  <a href="https://www.buymeacoffee.com/jagsAI"> coffee for JAGS AI</a> 
 
 Thank you for being awesome!
+<img src = "images/CR2_up_00_00001.png" width = "50%"> 
 
+<!-- end support-pitch -->
