@@ -57,7 +57,7 @@ class WaveGenerator():
     RETURN_NAMES = ("path", "tensor", "sample_rate")
     FUNCTION = "generate_wave"
 
-    CATEGORY = "Audio/WaveGenerator"
+    CATEGORY = "Jags_Audio/WaveGenerator"
 
     def generate_wave(self, keys, sample_rate, chunk_size, amplitude, waveform='sine'):
         tensor = create_signal(keys=keys, sample_rate=sample_rate, sample_length=chunk_size, amplitude=amplitude, waveform=waveform)
