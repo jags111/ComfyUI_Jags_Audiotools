@@ -4,15 +4,19 @@ import subprocess, sys, os
 import torch
 import random
 from pathlib import Path 
-
+import folder_paths
+import importlib
+import yaml
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 from server import PromptServer
 from aiohttp import web
 from folder_paths import models_dir, get_filename_list
 from model_management import get_torch_device
-
-import importlib
-import yaml
+from scipy.fft import fft
+from pydub import AudioSegment
 
 def hijack_import(importname, installname):
     try:
@@ -153,11 +157,53 @@ def save_audio(audio_out, output_path: str, sample_rate, id_str:str = None):
 # ****************************************************************************
 # *                                   NODES                                  *
 # ****************************************************************************
+class AudioData:
+    def __init__(self, audio_file) -> None:
+        
+        # Extract the sample rate
+        sample_rate = audio_file.frame_rate
+
+        # Get the number of audio channels
+        num_channels = audio_file.channels
+
+        # Extract the audio data as a NumPy array
+        audio_data = np.array(audio_file.get_array_of_samples())
+        self.audio_data = audio_data
+        self.sample_rate = sample_rate
+        self.num_channels = num_channels
+    
+    def get_channel_audio_data(self, channel: int):
+        if channel < 0 or channel >= self.num_channels:
+            raise IndexError(f"Channel '{channel}' out of range. total channels is '{self.num_channels}'.")
+        return self.audio_data[channel::self.num_channels]
+    
+    def get_channel_fft(self, channel: int):
+        audio_data = self.get_channel_audio_data(channel)
+        return fft(audio_data)
+
+class AudioFFTData:
+    def __init__(self, audio_data, sample_rate) -> None:
+
+        self.fft = fft(audio_data)
+        self.length = len(self.fft)
+        self.frequency_bins = np.fft.fftfreq(self.length, 1 / sample_rate)
+    
+    def get_max_amplitude(self):
+        return np.max(np.abs(self.fft))
+    
+    def get_normalized_fft(self) -> float:
+        max_amplitude = self.get_max_amplitude()
+        return np.abs(self.fft) / max_amplitude
+
+    def get_indices_for_frequency_bands(self, lower_band_range: int, upper_band_range: int):
+        return np.where((self.frequency_bins >= lower_band_range) & (self.frequency_bins < upper_band_range))
+
+    def __len__(self):
+        return self.length
 
 
 
-
-
+# ****************************************************************************
 class AudioInference():
     def __init__(self):
         pass
@@ -191,7 +237,7 @@ class AudioInference():
     RETURN_NAMES = ("out_paths", "tensor", "sample_rate")
     FUNCTION = "do_sample"
 
-    CATEGORY = "Audio/ComfyUI_Jags_Audiotools"
+    CATEGORY = "Jags_Audio/AudioInference"
 
     def do_sample(self, audio_model, mode, batch_size, steps, sampler, sigma_min, sigma_max, rho, scheduler, input_audio_path='', input_tensor=None, noise_level=0.7, seed=-1):
 
@@ -289,14 +335,16 @@ class SaveAudio():
     FUNCTION = "save_audio_ui"
     OUTPUT_NODE = True
 
-    CATEGORY = "Audio"
+    CATEGORY = "Jags_Audio"
 
     def save_audio_ui(self, tensor, output_path, sample_rate, id_string, tame):
         return (save_audio(audio_out=(0.5 * tensor).clamp(-1,1) if(tame == 'Enabled') else tensor, output_path=output_path, sample_rate=sample_rate, id_str=id_string), )
 
+
 class LoadAudio():
     def __init__(self):
-        self.input_audio = os.listdir(f'{comfy_dir}/custom_nodes/ComfyUI_Jags_Audiotools/audio_input')
+        #self.input_audio = os.listdir(f'{comfy_dir}/../../audio_input')
+        pass
     
     @classmethod
     def INPUT_TYPES(cls):
@@ -311,20 +359,23 @@ class LoadAudio():
             "optional": {
                 },
             }
-
-    RETURN_TYPES = ("STRING", "AUDIO", "INT")
-    RETURN_NAMES = ("path", "tensor", "sample_rate")
+        
+    RETURN_TYPES = ("STRING", "AUDIO", "INT" )
+    RETURN_NAMES = ("path","aud_tensor","samplerate")
     FUNCTION = "LoadAudio"
     OUTPUT_NODE = True
 
-    CATEGORY = "Audio"
+    CATEGORY = "Jags_Audio"
 
     def LoadAudio(self, file_path):
         if file_path == '':
             waveform, samplerate = None, None
-            return (file_path, samplerate, waveform)
+            return (file_path, waveform,samplerate,)
 
-        file_path = f'{comfy_dir}/custom_nodes/ComfyUI_Jags_Audiotools/audio_input/{file_path}'
+        #file_path = f'{comfy_dir}/custom_nodes/SampleDiffusion/audio_input/{file_path}'
+        input_dir = folder_paths.get_input_directory()
+        audio = os.path.join(input_dir, audio)
+        file_path = folder_paths.get_annotated_filepath(audio)
 
         if file_path.endswith('.mp3'):
             if os.path.exists(file_path.replace('.mp3', '')+'.wav'):
@@ -340,6 +391,45 @@ class LoadAudio():
         waveform = waveform.unsqueeze(0)
 
         return (file_path, waveform, samplerate)
+
+    """
+    def LoadAudio(self, audio):
+        input_dir = folder_paths.get_input_directory()
+        audio = os.path.join(input_dir, audio)
+        file = folder_paths.get_annotated_filepath(audio)
+        if file is not None:
+            audio = file
+        if (file.lower().endswith('.mp3')):
+            audio_file = AudioSegment.from_mp3(file)
+        else:
+            audio_file = AudioSegment.from_file(file, format="wav")
+        
+        audio_data = AudioData(audio_file)
+
+        return (audio_data,)
+        @classmethod
+        def IS_CHANGED(self, audio, **kwargs):
+            audio_path = folder_paths.get_annotated_filepath(audio)
+        m = hashlib.sha256()
+        with open(audio_path, 'rb') as f:
+            m.update(f.read())
+        return m.digest().hex()
+
+        @classmethod
+        def VALIDATE_INPUTS(self, audio, **kwargs):
+            if not folder_paths.exists_annotated_filepath(audio):
+                return "Invalid audio file: {}".format(audio)
+
+        return True
+    
+        waveform, samplerate = torchaudio.load(audio)
+        waveform = waveform.to(get_torch_device())
+        waveform = waveform.unsqueeze(0)
+
+        return (file_path, waveform, samplerate)
+    """
+
+#--------------------------------------------------------------------------------
 
 class LoadAudioModelDD():    
     @classmethod
@@ -368,7 +458,7 @@ class LoadAudioModelDD():
     FUNCTION = "DoLoadAudioModelDD"
     OUTPUT_NODE = True
 
-    CATEGORY = "Audio/ComfyUI_Jags_Audiotools"
+    CATEGORY = "Jags_Audio/Audiotools"
 
     def DoLoadAudioModelDD(self, model, chunk_size, sample_rate, optimize_memory_use, autocast):
         global models_folder
@@ -400,11 +490,12 @@ class PreviewAudioFile():
                 },
             }
 
-    RETURN_TYPES = ()
+    RETURN_TYPES = ("LIST", "STRING", )
+    RETURN_NAMES = ("paths", )
     FUNCTION = "PreviewAudioFile"
     OUTPUT_NODE = True
 
-    CATEGORY = "Audio"
+    CATEGORY = "Jags_Audio"
 
     def PreviewAudioFile(self, paths):
         # fix slashes
@@ -432,7 +523,7 @@ class PreviewAudioTensor():
     FUNCTION = "PreviewAudioTensor"
     OUTPUT_NODE = True
 
-    CATEGORY = "Audio"
+    CATEGORY = "Jags_Audio"
 
     def PreviewAudioTensor(self, tensor, sample_rate, tame):
         # fix slashes
@@ -461,7 +552,7 @@ class MergeTensors():
     RETURN_NAMES = ("tensor", "sample_rate")
     FUNCTION = "do_merge"
 
-    CATEGORY = "Audio/Helpers"
+    CATEGORY = "Jags_Audio/Helpers"
 
     def do_merge(self, tensor_1, tensor_2, tensor_1_volume, tensor_2_volume, sample_rate):
         # Ensure both batches have the same size and number of channels
@@ -493,7 +584,7 @@ class StringListIndex:
 
     RETURN_TYPES = ("STRING",)
     FUNCTION = "doStuff"
-    CATEGORY = "Audio/Helpers"
+    CATEGORY = "Jags_Audio/Helpers"
 
     def doStuff(self, list, index):
         return (list[index],)
@@ -514,7 +605,7 @@ class AudioIndex:
     RETURN_TYPES = ("AUDIO", "INT", "STRING")
     RETURN_NAMES = ("tensor", "sample_rate", "filename")
     FUNCTION = "doStuff"
-    CATEGORY = "Audio/Helpers"
+    CATEGORY = "Jags_Audio/Helpers"
 
     def doStuff(self, path, index):
         if not os.path.exists(path):
