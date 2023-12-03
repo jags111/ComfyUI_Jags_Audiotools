@@ -25,11 +25,10 @@ Includes a couple of  helper functions.
     <summary><bJags_Audiotools</b> & <b>Node summary</b></summary>
       <ul>
         <li>Node that the gives user the ability to generate and play audio results through variety of different methods.</li>
-        
         <li> Local models---The node pulls the required files from huggingface hub by default. You can create a models folder and place the modules there if you have a flaky connection or prefer to use it completely offline, it will load them locally instead. The path should be: ComfyUI/models/audio_diffusion; Alternatively, just clone the entire HF repo to it</li>
     </ul>
     <p align="center">
-      <img src="" width="1080">
+     -------- 
     </p>
 </details>
      
