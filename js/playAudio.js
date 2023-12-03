@@ -103,7 +103,7 @@ app.registerExtension({
 						// Wrap file in formdata so it includes filename
 						const body = new FormData();
 						body.append("file", file);
-						const resp = await fetch("/Audiotools/upload/audio", {
+						const resp = await fetch("../audio?", {
 							method: "POST",
 							body,
 						});
@@ -117,7 +117,7 @@ app.registerExtension({
 						if (resp.status === 200) {
 							const { name } = await resp.json();
 							pathWidget.value = name;
-							addPlaybackWidget(node, name, `/Audiotools/upload/audio?filename=${encodeURIComponent(name)}`)
+							addPlaybackWidget(node, name, `../audio?filename=${encodeURIComponent(name)}`)
 						} else {
 							alert(resp.status + " - " + resp.statusText);
 						}
