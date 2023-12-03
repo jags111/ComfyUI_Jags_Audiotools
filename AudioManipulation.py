@@ -42,7 +42,7 @@ class JoinAudio:
     RETURN_NAMES = ("joined_tensor", "sample_rate")
     FUNCTION = "join_audio"
 
-    CATEGORY = "Audio/Arrangement"
+    CATEGORY = "Jags_Audio/Arrangement"
 
     def join_audio(self, tensor_1, tensor_2, gap, overlap_method, sample_rate):
         joined_length = tensor_1.size(2) + tensor_2.size(2) + gap
@@ -88,7 +88,7 @@ class BatchJoinAudio:
     RETURN_NAMES = ("joined_tensor", "sample_rate")
     FUNCTION = "batch_join_audio"
 
-    CATEGORY = "Audio/Arrangement"
+    CATEGORY = "Jags_Audio/Arrangement"
 
     def batch_join_audio(self, batch_tensor, gap, overlap_method, sample_rate):
         joined_length = batch_tensor.size(2) * batch_tensor.size(0) + gap * (batch_tensor.size(0) - 1)
@@ -135,7 +135,7 @@ class CutAudio:
     RETURN_NAMES = ("cut_tensor", "sample_rate")
     FUNCTION = "cut_audio"
 
-    CATEGORY = "Audio/Arrangement"
+    CATEGORY = "Jags_Audio/Arrangement"
 
     def cut_audio(self, tensor, start, end, sample_rate):
         return tensor.clone()[:, :, start:end], sample_rate
@@ -158,7 +158,7 @@ class DuplicateAudio:
     RETURN_NAMES = ("out_tensor", "sample_rate")
     FUNCTION = "duplicate_audio"
 
-    CATEGORY = "Audio/Arrangement"
+    CATEGORY = "Jags_Audio/Arrangement"
 
     def duplicate_audio(self, tensor, count, sample_rate):
         return tensor.repeat(count, 1, 1), sample_rate
@@ -186,9 +186,11 @@ class StretchAudio:
     RETURN_NAMES = ("tensor", "sample_rate")
     FUNCTION = "stretch_audio"
 
-    CATEGORY = "Audio/Manipulation"
+    CATEGORY = "Jags_Audio/Manipulation"
 
     def stretch_audio(self, tensor, rate, sample_rate):
+        tensor = tensor.cpu().numpy()
+        #convert GPU tensor to CPU tensor for numpy else use a alternative method tensor.cuda().numpy ()
         y = tensor.cpu().numpy()
         y = librosa.effects.time_stretch(y, rate=rate)
         tensor_out = torch.from_numpy(y).to(device=tensor.device)
@@ -212,7 +214,7 @@ class ReverseAudio:
     RETURN_NAMES = ("tensor", "sample_rate")
     FUNCTION = "reverse_audio"
 
-    CATEGORY = "Audio/Manipulation"
+    CATEGORY = "Jags_Audio/Manipulation"
 
     def reverse_audio(self, tensor, sample_rate):
         return torch.flip(tensor.clone(), (2,)), sample_rate
@@ -234,9 +236,11 @@ class ResampleAudio:
     RETURN_NAMES = ("out_tensor", "sample_rate")
     FUNCTION = "resample_audio"
 
-    CATEGORY = "Audio/Manipulation"
+    CATEGORY = "Jags_Audio/Manipulation"
 
     def resample_audio(self, tensor, sample_rate, sample_rate_target):
+        tensor = tensor.cpu().numpy()
+        #convert GPU tensor to CPU tensor for numpy else use a alternative method tensor.cuda().numpy ()
         y = tensor.cpu().numpy()
         y = librosa.resample(y, sample_rate, sample_rate_target)
         tensor_out = torch.from_numpy(y).to(device=tensor.device)
