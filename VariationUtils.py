@@ -32,7 +32,7 @@ class SliceAudio:
     RETURN_NAMES = ("tensor_list", "sample_rate")
     FUNCTION = "slice_audio"
 
-    CATEGORY = "Audio/VariationUtils"
+    CATEGORY = "Jags_Audio/VariationUtils"
 
     def slice_audio(self, tensor, clip_size, sample_rate):
         return list(torch.split(tensor.clone(), clip_size, 2)), sample_rate
@@ -54,7 +54,7 @@ class BatchToList:
     RETURN_NAMES = ("tensor_list", "sample_rate")
     FUNCTION = "batch_to_list"
 
-    CATEGORY = "Audio/VariationUtils"
+    CATEGORY = "Jags_Audio/VariationUtils"
 
     def batch_to_list(self, tensor, sample_rate):
         return list(torch.split(tensor.clone(), 1, 0)), sample_rate
@@ -76,7 +76,7 @@ class LoadAudioDir:
     FUNCTION = "load_audio_dir"
     OUTPUT_NODE = True
 
-    CATEGORY = "Audio/VariationUtils"
+    CATEGORY = "Jags_Audio/VariationUtils"
 
     def load_audio_dir(self, dir_path):
         tensor_list = []
@@ -124,7 +124,7 @@ class ListToBatch:
     RETURN_NAMES = ("tensor", "sample_rate")
     FUNCTION = "list_to_batch"
 
-    CATEGORY = "Audio/VariationUtils"
+    CATEGORY = "Jags_Audio/VariationUtils"
 
     def list_to_batch(self, tensor_list, sample_rate):
         max_len = 0
@@ -159,7 +159,7 @@ class ConcatAudioList:
     RETURN_NAMES = ("tensor", "sample_rate")
     FUNCTION = "concat_audio"
 
-    CATEGORY = "Audio/VariationUtils"
+    CATEGORY = "Jags_Audio/VariationUtils"
 
     def concat_audio(self, tensor_list, sample_rate):
         return torch.cat(tensor_list, 2), sample_rate
@@ -196,7 +196,7 @@ class SequenceVariation:
     RETURN_NAMES = ("tensor_list", "sample_rate")
     FUNCTION = "do_variation"
 
-    CATEGORY = "Audio/VariationUtils"
+    CATEGORY = "Jags_Audio/VariationUtils"
 
     def do_variation(self, audio_model, batch_size, steps, sampler, sigma_min, sigma_max, rho, scheduler, tensor_list, noise_level=0.7, seed=-1):
         audio_inference = AudioInference()
@@ -236,7 +236,7 @@ class GetSingle:
     RETURN_NAMES = ("tensor", "sample_rate")
     FUNCTION = "get_single"
 
-    CATEGORY = "Audio/VariationUtils"
+    CATEGORY = "Jags_Audio/VariationUtils"
 
     def get_single(self, tensor_list, index, sample_rate):
         return tensor_list[index], sample_rate
@@ -276,7 +276,7 @@ class BulkVariation:
     RETURN_NAMES = ("tensor_list", "sample_rate")
     FUNCTION = "do_variation"
 
-    CATEGORY = "Audio/ComfyUI_Jags_Audiotools"
+    CATEGORY = "Jags_Audio/ComfyUI_Jags_Audiotools"
 
     def do_variation(self, audio_model, batch_size, steps, sampler, sigma_min, sigma_max, rho, scheduler, tensor_list, noise_level=0.7, seed=-1):
         audio_inference = AudioInference()
