@@ -1,6 +1,7 @@
 import { app } from "/scripts/app.js";
 import { ComfyWidgets } from "/scripts/widgets.js";
 import { api } from "/scripts/api.js";
+import LiteGraph from 'litegraph.js';
 
 function audioUpload(node, inputName, inputData, app) {
     const audioWidget = node.widgets.find((w) => w.name === "audio");
@@ -149,6 +150,7 @@ class audiotools {
 
 			ctx.save();
 			ctx.font = "12px sans-serif";
+
 			const sz = ctx.measureText(text);
 			ctx.fillStyle = bgColor || "dodgerblue";
 			ctx.beginPath();
@@ -170,12 +172,21 @@ class audiotools {
 	}
 }
 
-const audiotools = new audiotools();
+const audioToolsInstance = new audiotools();
+const extension = {
+	name: "AudioScheduler.UploadAudio",
+	async beforeRegisterNodeDef(nodeType, nodeData, app) {
+		if (nodeData?.name == "LoadAudio") {
+			nodeData.input.required.upload = ["AUDIOUPLOAD"];
+		}
+	},
+};
 
+app.registerExtension(extension);
 app.registerExtension({
 	name: "Jags_Audio",
 	async beforeRegisterNodeDef(nodeType, nodeData, app) {
-		pysssss.addStatusTagHandler(nodeType);
+		audioToolsInstance.addStatusTagHandler(nodeType);
 
 		if (nodeData.name === "Jags_Audio") {
 			const onExecuted = nodeType.prototype.onExecuted;
