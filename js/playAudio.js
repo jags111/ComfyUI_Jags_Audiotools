@@ -174,4 +174,6 @@ app.registerExtension({
 		}
 	},
 });
-app.registerExtension(node)
+
+const node = {}; // Declare the 'node' variable
+app.registerExtension(node);
