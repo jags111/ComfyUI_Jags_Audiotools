@@ -6,8 +6,8 @@ import numpy as np
 
 from comfy.model_management import get_torch_device
 from SampleDiffusion import AudioInference
-from diffusion_library.sampler import SamplerType
-from diffusion_library.scheduler import SchedulerType
+from libs.diffusion_library.sampler import SamplerType
+from libs.diffusion_library.scheduler import SchedulerType
 
 # -------------
 # LIST CREATION
