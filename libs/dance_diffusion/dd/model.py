@@ -3,8 +3,8 @@ from torch import nn
 from typing import Callable
 
 from .ddattnunet import DiffusionAttnUnet1D
-from dance_diffusion.base.model import ModelWrapperBase
-from dance_diffusion.base.type import ModelType
+from libs.dance_diffusion.base.model import ModelWrapperBase
+from libs.dance_diffusion.base.type import ModelType
 
 
 class DanceDiffusionInference(nn.Module):
