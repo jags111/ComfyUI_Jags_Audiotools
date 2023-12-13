@@ -13,7 +13,7 @@ import wave, math, array, sys
 from tqdm.auto import tqdm
 import torchaudio
 import torch
-from comfy.model_management import get_torch_device
+
 import os
 import scipy.signal as signal
 import subprocess
@@ -22,6 +22,12 @@ try:
 except ModuleNotFoundError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "matplotlib"])
     import matplotlib
+
+# Install the missing package
+
+# Import the required module
+from comfy.model_management import get_torch_device
+
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import random
