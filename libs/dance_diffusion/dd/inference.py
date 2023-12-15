@@ -284,10 +284,10 @@ class DDInference(InferenceBase):
         else:
             return output[:, :, -half_chunk_size:]
 from typing import Tuple, Callable
-from diffusion_library.scheduler import SchedulerType
-from diffusion_library.sampler import SamplerType
-from dance_diffusion.base.model import ModelWrapperBase
-from dance_diffusion.base.inference import InferenceBase
+from libs.diffusion_library.scheduler import SchedulerType
+from libs.diffusion_library.sampler import SamplerType
+from libs.dance_diffusion.base.model import ModelWrapperBase
+from libs.dance_diffusion.base.inference import InferenceBase
 
 from libs.util.util import tensor_slerp_2D, PosteriorSampling
     
