@@ -39,10 +39,10 @@ class JoinAudio:
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("joined_tensor", "sample_rate")
+    RETURN_NAMES = ("🎵joined_audio", "sample_rate")
     FUNCTION = "join_audio"
 
-    CATEGORY = "Jags_Audio/Arrangement"
+    CATEGORY = "🎵Jags_Audio/Arrangement"
 
     def join_audio(self, tensor_1, tensor_2, gap, overlap_method, sample_rate):
         joined_length = tensor_1.size(2) + tensor_2.size(2) + gap
@@ -85,10 +85,10 @@ class BatchJoinAudio:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("joined_tensor", "sample_rate")
+    RETURN_NAMES = ("🎵joined_audio", "sample_rate")
     FUNCTION = "batch_join_audio"
 
-    CATEGORY = "Jags_Audio/Arrangement"
+    CATEGORY = "🎵Jags_Audio/Arrangement"
 
     def batch_join_audio(self, batch_tensor, gap, overlap_method, sample_rate):
         joined_length = batch_tensor.size(2) * batch_tensor.size(0) + gap * (batch_tensor.size(0) - 1)
@@ -132,10 +132,10 @@ class CutAudio:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("cut_tensor", "sample_rate")
+    RETURN_NAMES = ("🎵cut_audio", "sample_rate")
     FUNCTION = "cut_audio"
 
-    CATEGORY = "Jags_Audio/Arrangement"
+    CATEGORY = "🎵Jags_Audio/Arrangement"
 
     def cut_audio(self, tensor, start, end, sample_rate):
         return tensor.clone()[:, :, start:end], sample_rate
@@ -155,10 +155,10 @@ class DuplicateAudio:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("out_tensor", "sample_rate")
+    RETURN_NAMES = ("🎵out_audio", "sample_rate")
     FUNCTION = "duplicate_audio"
 
-    CATEGORY = "Jags_Audio/Arrangement"
+    CATEGORY = "🎵Jags_Audio/Arrangement"
 
     def duplicate_audio(self, tensor, count, sample_rate):
         return tensor.repeat(count, 1, 1), sample_rate
@@ -183,10 +183,10 @@ class StretchAudio:
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "stretch_audio"
 
-    CATEGORY = "Jags_Audio/Manipulation"
+    CATEGORY = "🎵Jags_Audio/Manipulation"
 
     def stretch_audio(self, tensor, rate, sample_rate):
         tensor = tensor.cpu().numpy()
@@ -211,10 +211,10 @@ class ReverseAudio:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "reverse_audio"
 
-    CATEGORY = "Jags_Audio/Manipulation"
+    CATEGORY = "🎵Jags_Audio/Manipulation"
 
     def reverse_audio(self, tensor, sample_rate):
         return torch.flip(tensor.clone(), (2,)), sample_rate
@@ -233,10 +233,10 @@ class ResampleAudio:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("out_tensor", "sample_rate")
+    RETURN_NAMES = ("🎵out_audio", "sample_rate")
     FUNCTION = "resample_audio"
 
-    CATEGORY = "Jags_Audio/Manipulation"
+    CATEGORY = "🎵Jags_Audio/Manipulation"
 
     def resample_audio(self, tensor, sample_rate, sample_rate_target):
         tensor = tensor.cpu().numpy()
