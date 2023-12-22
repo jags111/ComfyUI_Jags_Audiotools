@@ -73,7 +73,7 @@ class Plot_Spectrogram():
     FUNCTION = "PlotSpectrogram"
     OUTPUT_NODE = True
 
-    CATEGORY = "Jags_Audio/Extra"
+    CATEGORY = "🎵Jags_Audio/Extra"
 
     def PlotSpectrogram(self, audio_tensor, sample_rate, window_size, overlap_size, color_map, labels):
         labels = labels == 'Enabled'
@@ -140,11 +140,11 @@ class ImageToSpectral():
             }
 
     RETURN_TYPES = ("STRING", "AUDIO", "INT")
-    RETURN_NAMES = ("path", "tensor", "sample_rate")
+    RETURN_NAMES = ("path", "🎵audio", "sample_rate")
     FUNCTION = "DoImageToSpectral"
     OUTPUT_NODE = True
 
-    CATEGORY = "Jags_Audio/Extra"
+    CATEGORY = "🎵Jags_Audio/Extra"
 
     def tensor_to_pil(self, img):
         if img is not None:
