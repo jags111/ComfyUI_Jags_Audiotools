@@ -72,7 +72,7 @@ class LoadVST():
     RETURN_NAMES = ("vst3", )
     FUNCTION = "load_vst3"
 
-    CATEGORY = "Jags_Audio/Pedalboard"
+    CATEGORY = "🎵Jags_Audio/Pedalboard"
 
     def load_vst3(self, vst3_path):
         return (load_plugin(vst3_path), )
@@ -115,10 +115,10 @@ class OTT():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_ott"
 
-    CATEGORY = "Jags_Audio/Pedalboard/VST3Wrappers"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/VST3Wrappers"
 
     def apply_ott(
         self,
@@ -165,9 +165,9 @@ class BitCrushEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_bitcrush"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_bitcrush(self, tensor, sample_rate, bit_depth=8.0, ):
         board = Pedalboard([Bitcrush(bit_depth=bit_depth)])
@@ -194,9 +194,9 @@ class ChorusEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_chorus"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_chorus(self, tensor, sample_rate, rate_hz=1.0, depth=0.25, centre_delay_ms=0.0, feedback=0.0, mix=0.5):
         board = Pedalboard([Chorus(rate_hz=rate_hz, depth=depth, centre_delay_ms=centre_delay_ms, feedback=feedback, mix=mix)])
@@ -219,9 +219,9 @@ class ClippingEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_clipping"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_clipping(self, tensor, sample_rate, threshold_db):
         board = Pedalboard([Clipping(threshold_db=threshold_db)])
@@ -247,9 +247,9 @@ class CompressorEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_compressor"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_compressor(self, tensor, sample_rate, threshold_db=-6.0, ratio=1.0, attack_ms=1.0, release_ms=100.0):
         board = Pedalboard([Compressor(threshold_db=threshold_db, ratio=ratio, attack_ms=attack_ms, release_ms=release_ms)])
@@ -271,9 +271,9 @@ class ConvolutionEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_convolution"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_convolution(self, tensor, sample_rate, impulse_response_path, mix=1.0):
         board = Pedalboard([Convolution(impulse_response_path=impulse_response_path, mix=mix)])
@@ -296,9 +296,9 @@ class DelayEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_delay"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_delay(self, tensor, sample_rate, delay_seconds=0.5, feedback=0.0, mix=0.5):
         board = Pedalboard([Delay(delay_seconds=delay_seconds, feedback=feedback, mix=mix)])
@@ -319,9 +319,9 @@ class DistortionEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_distortion"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_distortion(self, tensor, sample_rate, drive_db=25.0):
         board = Pedalboard([Distortion(drive_db=drive_db)])
@@ -342,9 +342,9 @@ class GainEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_gain"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_gain(self, tensor, sample_rate, gain_db=0.0):
         board = Pedalboard([Gain(gain_db=gain_db)])
@@ -364,9 +364,9 @@ class InvertEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_invert"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_invert(self, tensor, sample_rate):
         board = Pedalboard([Invert()])
@@ -389,9 +389,9 @@ class LimiterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_limiter"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_limiter(self, tensor, sample_rate, threshold_db=-10.0, release_ms=100.0):
         board = Pedalboard([Limiter(threshold_db=threshold_db, release_ms=release_ms)])
@@ -413,9 +413,9 @@ class MP3CompressorEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_mp3_compressor"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_mp3_compressor(self, tensor, sample_rate, vbr_quality=2.0):
         board = Pedalboard([MP3Compressor(vbr_quality=vbr_quality)])
@@ -440,9 +440,9 @@ class NoiseGateEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_noise_gate"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_noise_gate(self, tensor, sample_rate, threshold_db=-100.0, ratio=10.0, attack_ms=1.0, release_ms=100.0):
         board = Pedalboard([NoiseGate(threshold_db=threshold_db, ratio=ratio, attack_ms=attack_ms, release_ms=release_ms)])
@@ -465,9 +465,9 @@ class PitchShiftEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_pitch_shift"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_pitch_shift(self, tensor, sample_rate, semitones=0.0):
         board = Pedalboard([PitchShift(semitones=semitones)])
@@ -492,9 +492,9 @@ class PhaserEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_phaser"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_phaser(self, tensor, sample_rate, rate_hz=1.0, depth=0.5, centre_frequency_hz=1300.0, feedback=0.0, mix=0.5):
         board = Pedalboard([Phaser(rate_hz=rate_hz, depth=depth, centre_frequency_hz=centre_frequency_hz, feedback=feedback, mix=mix)])
@@ -520,9 +520,9 @@ class ReverbEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_reverb"
-    CATEGORY = "Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
 
     def apply_reverb(self, tensor, sample_rate, room_size=0.5, damping=0.5, wet_level=0.33, dry_level=0.4, width=1.0, freeze_mode=0.0):
         board = Pedalboard([Reverb(room_size=room_size, damping=damping, wet_level=wet_level, dry_level=dry_level, width=width, freeze_mode=freeze_mode)])
@@ -549,9 +549,9 @@ class HighShelfFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_high_shelf_filter"
-    CATEGORY = "Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
 
     def apply_high_shelf_filter(self, tensor, sample_rate, cutoff_frequency_hz=440.0, gain_db=0.0, q=0.7071067690849304):
         board = Pedalboard([HighShelfFilter(cutoff_frequency_hz=cutoff_frequency_hz, gain_db=gain_db, q=q)])
@@ -572,9 +572,9 @@ class HighpassFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_highpass_filter"
-    CATEGORY = "Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
 
     def apply_highpass_filter(self, tensor, sample_rate, cutoff_frequency_hz=50.0):
         board = Pedalboard([HighpassFilter(cutoff_frequency_hz=cutoff_frequency_hz)])
@@ -598,9 +598,9 @@ class LadderFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_ladder_filter"
-    CATEGORY = "Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
 
     def apply_ladder_filter(self, tensor, sample_rate, mode='LPF12', cutoff_hz=200.0, resonance=0.0, drive=1.0):
         mode = getattr(LadderFilter, mode)
@@ -624,9 +624,9 @@ class LowShelfFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_low_shelf_filter"
-    CATEGORY = "Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
 
     def apply_low_shelf_filter(self, tensor, sample_rate, cutoff_frequency_hz=440.0, gain_db=0.0, q=0.7071067690849304):
         board = Pedalboard([LowShelfFilter(cutoff_frequency_hz=cutoff_frequency_hz, gain_db=gain_db, q=q)])
@@ -647,9 +647,9 @@ class LowpassFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_lowpass_filter"
-    CATEGORY = "Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
 
     def apply_lowpass_filter(self, tensor, sample_rate, cutoff_frequency_hz=50.0):
         board = Pedalboard([LowpassFilter(cutoff_frequency_hz=cutoff_frequency_hz)])
@@ -672,9 +672,9 @@ class PeakFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("tensor", "sample_rate")
+    RETURN_NAMES = ("🎵audio", "sample_rate")
     FUNCTION = "apply_peak_filter"
-    CATEGORY = "Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
 
     def apply_peak_filter(self, tensor, sample_rate, cutoff_frequency_hz=440.0, gain_db=0.0, q=0.7071067690849304):
         board = Pedalboard([PeakFilter(cutoff_frequency_hz=cutoff_frequency_hz, gain_db=gain_db, q=q)])
