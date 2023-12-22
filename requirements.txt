@@ -15,3 +15,5 @@ black
 diffusers
 v-diffusion-pytorch
 pydub
+pygame
+tk
