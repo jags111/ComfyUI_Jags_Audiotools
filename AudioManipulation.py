@@ -5,15 +5,17 @@ import subprocess
 import sys
 
 
-def hijack_import(importname, installname):
+def check_import(importname, installname=None):
     try:
         importlib.import_module(importname)
     except ModuleNotFoundError:
-        print(f"Import failed for {importname}, Installing {installname}")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", installname])
+        installname = installname if installname else importname
+        print(f"Required module '{importname}' not found. Please install it using 'pip install {installname}'.")
 
 
-hijack_import("librosa", "librosa")
+check_import("librosa", "librosa")
+
+import librosa.effects
 
 import librosa.effects
 
