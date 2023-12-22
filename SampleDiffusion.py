@@ -33,18 +33,18 @@ def get_comfy_dir():
 
 comfy_dir = get_comfy_dir()
 
-def hijack_import(importname, installname):
+def check_import(importname, installname=None):
     try:
         importlib.import_module(importname)
     except ModuleNotFoundError:
-        print(f"Import failed for {importname}, Installing {installname}")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", installname])
+        installname = installname if installname else importname
+        print(f"Required module '{importname}' not found. Please install it using 'pip install {installname}'.")
 
-hijack_import("audio_diffusion_pytorch", "audio_diffusion_pytorch==0.0.96")
-hijack_import("diffusion", "v-diffusion-pytorch")
-hijack_import("k_diffusion", "k-diffusion")
-hijack_import("soundfile", "soundfile")
-hijack_import("torchaudio", "torchaudio")
+check_import("audio_diffusion_pytorch")
+check_import("diffusion", "v-diffusion-pytorch")
+check_import("k_diffusion", "k-diffusion")
+check_import("soundfile")
+check_import("torchaudio")
 
 import soundfile as sf
 import torchaudio
