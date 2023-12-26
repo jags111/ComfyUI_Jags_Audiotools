@@ -10,13 +10,19 @@ import yaml
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import audio_diffusion_pytorch
+import diffusion
+#import v_diffusion_pytorch
+import folder_paths as comfy_paths
+import k_diffusion
+import soundfile as sf
+import torchaudio
+from io import BytesIO
+import hashlib
 from server import PromptServer
 from aiohttp import web
 from folder_paths import models_dir, get_filename_list
 from comfy.model_management import get_torch_device
-from scipy.fft import fft
-from pydub import AudioSegment
 
 def get_comfy_dir():
     dirs = __file__.split('\\')
@@ -33,53 +39,13 @@ def get_comfy_dir():
 
 comfy_dir = get_comfy_dir()
 
-def check_import(importname, installname=None):
-    try:
-        importlib.import_module(importname)
-    except ModuleNotFoundError:
-        installname = installname if installname else importname
-        print(f"Required module '{importname}' not found. Please install it using 'pip install {installname}'.")
+# ****************************************************************************
 
-check_import("audio_diffusion_pytorch")
-check_import("diffusion", "v-diffusion-pytorch")
-check_import("k_diffusion", "k-diffusion")
-check_import("soundfile")
-check_import("torchaudio")
-
-import soundfile as sf
-import torchaudio
 
 PromptServer.instance.app._client_max_size = 250 * 1024 * 1024 #  250 MB
 
-# Add route for uploading audio, duplicates image upload but to audio_input
-@PromptServer.instance.routes.post("/ComfyUI_Jags_Audiotools/upload/audio")
-async def upload_audio(request):
-    upload_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "audio_input")
-
-    if not os.path.exists(upload_dir):
-        os.makedirs(upload_dir)
-    
-    post = await request.post()
-    file = post.get("file")
-
-    if file and file.file:
-        filename = file.filename
-        if not filename:
-            return web.Response(status=400)
-
-        if os.path.exists(os.path.join(upload_dir, filename)):
-            os.remove(os.path.join(upload_dir, filename))
-
-        filepath = os.path.join(upload_dir, filename)
-
-        with open(filepath, "wb") as f:
-            f.write(file.file.read())
-        
-        return web.json_response({"name" : filename})
-    else:
-        return web.Response(status=400)
-
 # Add route for getting audio, duplicates view image but allows audio_input
+"""
 @PromptServer.instance.routes.get("/ComfyUI_Jags_Audiotools/audio")
 async def view_image(request):
     if "filename" in request.rel_url.query:
@@ -102,7 +68,7 @@ async def view_image(request):
             return web.FileResponse(file, headers={"Content-Disposition": f"filename=\"{filename}\""})
         
     return web.Response(status=404)
-
+"""
 
 config = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config.yaml")
 
@@ -133,6 +99,18 @@ from libs.diffusion_library.scheduler import SchedulerType
 from libs.dance_diffusion.dd.model import DDModelWrapper
 from libs.dance_diffusion.dd.inference import DDInference
 
+from scipy.fft import fft
+from pydub import AudioSegment
+from itertools import cycle
+
+# PIL to Tensor
+def pil2tensor(image):
+    return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
+
+# ****************************************************************************
+# sound play functionality for audio nodes
+# needs further testing
+
 def save_audio(audio_out, output_path: str, sample_rate, id_str:str = None):
     out_files = []
     if not os.path.exists(output_path):
@@ -155,8 +133,7 @@ def save_audio(audio_out, output_path: str, sample_rate, id_str:str = None):
     
     return out_files
 
-# sound play functionality for audio nodes
-# needs further testing
+
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 try:
     from pygame import mixer
@@ -172,7 +149,7 @@ def PlaySound(path, volume):
     mixer.music.set_volume(volume)
     mixer.music.play()
 
-# ****************************************************************************
+
 #testing the audio file for playback
 
 # ****************************************************************************
@@ -249,18 +226,18 @@ class AudioInference():
                 "seed": ("INT", {"default": -1}),
                 },
             "optional": {
-                "input_tensor": ("AUDIO", {}),
+                "input_audio": ("AUDIO", {}),
                 "input_audio_path": ("STRING", {"default": '', "forceInput": True}),
                 },
             }
 
     RETURN_TYPES = ("LIST", "AUDIO", "INT")
-    RETURN_NAMES = ("out_paths", "🎵audio", "sample_rate")
+    RETURN_NAMES = ("out_paths", "🎙️audio", "sample_rate")
     FUNCTION = "do_sample"
 
-    CATEGORY = "🎵Jags_Audio/AudioInference"
+    CATEGORY = "🎙️Jags_Audio/AudioInference"
 
-    def do_sample(self, audio_model, mode, batch_size, steps, sampler, sigma_min, sigma_max, rho, scheduler, input_audio_path='', input_tensor=None, noise_level=0.7, seed=-1):
+    def do_sample(self, audio_model, mode, batch_size, steps, sampler, sigma_min, sigma_max, rho, scheduler, input_audio_path='', input_audio=None, noise_level=0.7, seed=-1):
 
 
         wrapper, inference = audio_model
@@ -332,17 +309,22 @@ class AudioInference():
 
 class SaveAudio():
     def __init__(self):
-        pass
+        self.output_dir = comfy_paths.output_directory
+        self.type = os.path.basename(self.output_dir)
     
     @classmethod
     def INPUT_TYPES(cls):
         """
-        Input Types
+        Save Audio files
         """
         return {
             "required": {
-                "tensor": ("AUDIO", ),
-                "output_path": ("STRING", {"default": f'{comfy_dir}/output/audio_samples'}),
+                "audio": ("AUDIO", ),
+                "output_path": ("STRING", {"default": '[time(%Y-%m-%d)]', "multiline": False}),
+                "filename_prefix": ("STRING", {"default": "ComfyUI"}),
+                "filename_delimiter": ("STRING", {"default":"_"}),
+                "filename_number_padding": ("INT", {"default":4, "min":1, "max":9, "step":1}),
+                "filename_number_start": (["false", "true"],),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1}),
                 "id_string": ("STRING", {"default": 'ComfyUI'}),
                 "tame": (['Enabled', 'Disabled'],)
@@ -352,74 +334,52 @@ class SaveAudio():
             }
 
     RETURN_TYPES = ("STRING", "AUDIO")
-    RETURN_NAMES = ("path","🎵audio" )
-    FUNCTION = "save_audio"
+    RETURN_NAMES = ("path","🎙️audio" )
+    FUNCTION = "audio_save"
     OUTPUT_NODE = True
 
-    CATEGORY = "🎵Jags_Audio"
+    CATEGORY = "🎙️Jags_Audio"
 
-    def save_audio(self, tensor, output_path, sample_rate, id_string, tame):
-        return (save_audio(audio_out=(0.5 * tensor).clamp(-1,1) if(tame == 'Enabled') else tensor, output_path=output_path, sample_rate=sample_rate, id_str=id_string), )
+    def audio_save(self, audio, output_path=None, filename_prefix="ComfyUI", filename_delimiter='_', filename_number_padding=4, filename_number_start='false', sample_rate='_', id_string='_', tame='Enabled'):
+        delimiter = filename_delimiter
+        number_padding = filename_number_padding if filename_number_padding > 1 else 4
+        
+        return (SaveAudio(audio_out=(0.5 * audio).clamp(-1,1) if(tame == 'Enabled') else audio, output_path=output_path, sample_rate=sample_rate, id_str=id_string), )
+        
 
 
 class LoadAudio():
-    def __init__(self):
-        #self.input_audio = os.listdir(f'{comfy_dir}/../../audio_input')
-        pass
-    
     @classmethod
-    def INPUT_TYPES(cls):
-        """
-        Input Types
-        """
+    def INPUT_TYPES(s):
+        audio_extensions = ['mp3','wav']
+        input_dir = folder_paths.get_input_directory()
+        files = []
+        for f in os.listdir(input_dir):
+            if os.path.isfile(os.path.join(input_dir, f)):
+                file_parts = f.split('.')
+                if len(file_parts) > 1 and (file_parts[-1] in audio_extensions):
+                    files.append(f)
         return {
             "required": {
-                ""
-                "file_path": ("STRING", {}),
+                "audio": (sorted(files),),
+                "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1}),
                 },
             "optional": {
+                
                 },
             }
         
-    RETURN_TYPES = ("STRING", "AUDIO", "INT" )
-    RETURN_NAMES = ("path","🎵audio","samplerate")
+    RETURN_TYPES = ("AUDIO", "INT" )
+    RETURN_NAMES = ("🎙️audio","sample_rate")
     FUNCTION = "LoadAudio"
     OUTPUT_NODE = True
 
-    CATEGORY = "🎵Jags_Audio"
+    CATEGORY = "🎙️Jags_Audio"
 
-    def LoadAudio(self, file_path):
-        if file_path == '':
-            waveform, samplerate = None, None
-            return (file_path, waveform,samplerate,)
-
-        #file_path = f'{comfy_dir}/custom_nodes/SampleDiffusion/audio_input/{file_path}'
-        input_dir = folder_paths.get_input_directory()
-        audio = os.path.join(input_dir, audio)
-        file_path = folder_paths.get_annotated_filepath(audio)
-
-        if file_path.endswith('.mp3'):
-            if os.path.exists(file_path.replace('.mp3', '')+'.wav'):
-                file_path = file_path.replace('.mp3', '')+'.wav'
-            else:
-                data, samplerate = sf.read(file_path)
-                sf.write(file_path.replace('.mp3', '')+'.wav', data, samplerate)
-
-            os.remove(file_path.replace('.wav', '.mp3'))
-
-        waveform, samplerate = torchaudio.load(file_path)
-        waveform = waveform.to(get_torch_device())
-        waveform = waveform.unsqueeze(0)
-
-        return (file_path, waveform, samplerate)
-
-    """
-    def LoadAudio(self, audio):
-        input_dir = folder_paths.get_input_directory()
-        audio = os.path.join(input_dir, audio)
+    def LoadAudio(self, audio,):
         file = folder_paths.get_annotated_filepath(audio)
-        if file is not None:
-            audio = file
+
+        # TODO: support more formats
         if (file.lower().endswith('.mp3')):
             audio_file = AudioSegment.from_mp3(file)
         else:
@@ -428,26 +388,25 @@ class LoadAudio():
         audio_data = AudioData(audio_file)
 
         return (audio_data,)
-        @classmethod
-        def IS_CHANGED(self, audio, **kwargs):
-            audio_path = folder_paths.get_annotated_filepath(audio)
+        #file_path = f'{comfy_dir}/custom_nodes/SampleDiffusion/audio_input/{file_path}'
+    @classmethod
+    def IS_CHANGED(self, audio, **kwargs):
+        audio_path = folder_paths.get_annotated_filepath(audio)
         m = hashlib.sha256()
         with open(audio_path, 'rb') as f:
             m.update(f.read())
         return m.digest().hex()
 
-        @classmethod
-        def VALIDATE_INPUTS(self, audio, **kwargs):
-            if not folder_paths.exists_annotated_filepath(audio):
-                return "Invalid audio file: {}".format(audio)
+    @classmethod
+    def VALIDATE_INPUTS(self, audio, **kwargs):
+        if not folder_paths.exists_annotated_filepath(audio):
+            return "Invalid audio file: {}".format(audio)
 
         return True
-    
-        waveform, samplerate = torchaudio.load(audio)
-        waveform = waveform.to(get_torch_device())
-        waveform = waveform.unsqueeze(0)
 
-        return (file_path, waveform, samplerate)
+    """
+    alternates
+
     """
 
 #--------------------------------------------------------------------------------
@@ -479,7 +438,7 @@ class LoadAudioModelDD():
     FUNCTION = "DoLoadAudioModelDD"
     OUTPUT_NODE = True
 
-    CATEGORY = "🎵Jags_Audio/Audiotools"
+    CATEGORY = "🎙️Jags_Audio/Audiotools"
 
     def DoLoadAudioModelDD(self, model, chunk_size, sample_rate, optimize_memory_use, autocast):
         global models_folder
@@ -505,7 +464,7 @@ class PreviewAudioFile():
         """
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "output_path": ("STRING", {"default": f'{comfy_dir}/output/audio_samples'}),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1}),
                 "id_string": ("STRING", {"default": 'ComfyUI'}),
@@ -516,11 +475,11 @@ class PreviewAudioFile():
             }
 
     RETURN_TYPES = ("AUDIO", "STRING", )
-    RETURN_NAMES = ("🎵audio","paths", )
+    RETURN_NAMES = ("🎙️audio","paths", )
     FUNCTION = "PreviewAudioFile"
     OUTPUT_NODE = True
 
-    CATEGORY = "🎵Jags_Audio"
+    CATEGORY = "🎙️Jags_Audio"
 
     def PreviewAudioFile(self, paths):
         # fix slashes
@@ -535,7 +494,7 @@ class PreviewAudioTensor():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO",),
+                "audio": ("AUDIO",),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "tame": (['Enabled', 'Disabled'],)
                 },
@@ -544,15 +503,15 @@ class PreviewAudioTensor():
             }
 
     RETURN_TYPES = ("AUDIO","LIST", )
-    RETURN_NAMES = ("🎵audio","paths", )
+    RETURN_NAMES = ("🎙️audio","paths", )
     FUNCTION = "PreviewAudioTensor"
     OUTPUT_NODE = True
 
-    CATEGORY = "🎵Jags_Audio"
+    CATEGORY = "🎙️Jags_Audio"
 
-    def PreviewAudioTensor(self, tensor, sample_rate, tame):
+    def PreviewAudioTensor(self, audio, sample_rate, tame):
         # fix slashes
-        paths = save_audio((0.5 * tensor).clamp(-1,1) if(tame == 'Enabled') else tensor, f"{comfy_dir}/temp", sample_rate, f"{random.randint(0, 10000000000)}")
+        paths = save_audio((0.5 * audio).clamp(-1,1) if(tame == 'Enabled') else audio, f"{comfy_dir}/temp", sample_rate, f"{random.randint(0, 10000000000)}")
         paths = [path.replace("\\", "/") for path in paths]
         # get filenames with extensions from paths
         paths = [os.path.basename(path) for path in paths]
@@ -563,10 +522,10 @@ class MergeTensors():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor_1": ("AUDIO",),
-                "tensor_2": ("AUDIO",),
-                "tensor_1_volume": ("FLOAT", {"default": 1, "min": 0, "max": 1, "step": 0.01}),
-                "tensor_2_volume": ("FLOAT", {"default": 1, "min": 0, "max": 1, "step": 0.01}),
+                "audio_1": ("AUDIO",),
+                "audio_2": ("AUDIO",),
+                "audio_1_volume": ("FLOAT", {"default": 1, "min": 0, "max": 1, "step": 0.01}),
+                "audio_2_volume": ("FLOAT", {"default": 1, "min": 0, "max": 1, "step": 0.01}),
                 },
             "optional": {
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
@@ -574,25 +533,25 @@ class MergeTensors():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "do_merge"
 
-    CATEGORY = "🎵Jags_Audio/Helpers"
+    CATEGORY = "🎙️Jags_Audio/Helpers"
 
-    def do_merge(self, tensor_1, tensor_2, tensor_1_volume, tensor_2_volume, sample_rate):
+    def do_merge(self, audio_1, audio_2, audio_1_volume, audio_2_volume, sample_rate):
         # Ensure both batches have the same size and number of channels
-        assert tensor_1.size(0) == tensor_2.size(0) and tensor_1.size(1) == tensor_2.size(1), "Batches must have the same size and number of channels"
+        assert audio_1.size(0) == audio_2.size(0) and audio_1.size(1) == audio_2.size(1), "Batches must have the same size and number of channels"
 
         # Pad or truncate the shorter waveforms in the batches to match the length of the longer ones
-        max_length = max(tensor_1.size(2), tensor_2.size(2))
-        tensor_1_padded = torch.zeros(tensor_1.size(0), tensor_1.size(1), max_length)
-        tensor_2_padded = torch.zeros(tensor_2.size(0), tensor_2.size(1), max_length)
+        max_length = max(audio_1.size(2), audio_2.size(2))
+        tensor_1_padded = torch.zeros(audio_1.size(0), audio_1.size(1), max_length)
+        tensor_2_padded = torch.zeros(audio_2.size(0), audio_2.size(1), max_length)
 
-        tensor_1_padded[:, :, :tensor_1.size(2)] = tensor_1
-        tensor_2_padded[:, :, :tensor_2.size(2)] = tensor_2
+        tensor_1_padded[:, :, :audio_1.size(2)] = audio_1
+        tensor_2_padded[:, :, :audio_2.size(2)] = audio_2
 
         # Mix the batches with specified volumes
-        mixed_tensors = tensor_1_volume * tensor_1_padded + tensor_2_volume * tensor_2_padded
+        mixed_tensors = audio_1_volume * tensor_1_padded + audio_2_volume * tensor_2_padded
 
         return (mixed_tensors, sample_rate)
 
@@ -609,7 +568,7 @@ class StringListIndex:
 
     RETURN_TYPES = ("STRING",)
     FUNCTION = "doStuff"
-    CATEGORY = "🎵Jags_Audio/Helpers"
+    CATEGORY = "🎙️Jags_Audio/Helpers"
 
     def doStuff(self, list, index):
         return (list[index],)
@@ -628,9 +587,9 @@ class AudioIndex:
         }
 
     RETURN_TYPES = ("AUDIO", "INT", "STRING")
-    RETURN_NAMES = ("🎵audio", "sample_rate", "filename")
+    RETURN_NAMES = ("🎙️audio", "sample_rate", "filename")
     FUNCTION = "doStuff"
-    CATEGORY = "🎵Jags_Audio/Helpers"
+    CATEGORY = "🎙️Jags_Audio/Helpers"
 
     def doStuff(self, path, index):
         if not os.path.exists(path):
@@ -646,31 +605,41 @@ class AudioIndex:
         audio.to(get_torch_device())
         return (audio, sample_rate, filename)
     
-class IntegerNode:
-    def __init__(self) -> None:
+class samplerate:
+    def __init__(self):
         pass
 
     @classmethod
-    def INPUT_TYPES(cls):
+    def INPUT_TYPES(s):
         return {
             "required": {
-                "Value": ("FLOAT", {
-                        "default": 1,
-                        "min": -sys.maxsize,
-                        "max": sys.maxsize,
-                        "step": 1
+                "Value": ("INT", {
+                        "default": 44100,
+                        "min": 1,
+                        "max": 10000000000,
+                        "step": 1                        
                     },
                 )
             },
         }
+        
 
     RETURN_TYPES = ("INT",)
-    RETURN_NAMES = ("SAMPLE_RATE",)
-    CATEGORY = "🎵Jags_Audio/Helpers"
-    FUNCTION = "sample_rate"
+    RETURN_NAMES = ("sample_rate",)
+    CATEGORY = "🎙️Jags_Audio/Helpers"
+    FUNCTION = "get_rate"
 
-    def get_value(self, Value):
-        return (int(Value),)
+    def get_rate(self, Value):
+        if value == "":
+            value = 0
+        if value == "undefined":
+            value = 0
+        #if not an int
+        if not int(value):
+            value = 0    
+
+        return (value,)
+        #return (int(Value),)
 
 NODE_CLASS_MAPPINGS = {
     "GenerateAudioSample": AudioInference,
@@ -682,7 +651,7 @@ NODE_CLASS_MAPPINGS = {
     "LoadAudioModel (DD)": LoadAudioModelDD,
     "MixAudioTensors": MergeTensors,
     "GetAudioFromFolderIndex": AudioIndex,
-    "GetInteger": IntegerNode,
+    "samplerate": samplerate,
     
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -695,7 +664,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "LoadAudioModel (DD)": "Jags_LoadAudioModelDD",
     "MixAudioTensors": "Jags_MergeTensors",
     "GetAudioFromFolderIndex": "Jags_AudioIndex",
-    "GetInteger": "Jags_SampleRate",
+    "samplerate": "Jags_SampleRate",
     
 }
 
