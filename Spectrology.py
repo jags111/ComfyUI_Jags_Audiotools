@@ -33,6 +33,10 @@ import matplotlib.pyplot as plt
 import random
 import numpy as np
 
+# PIL to Tensor
+def pil2tensor(image):
+    return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
+
 def get_comfy_dir():
     dirs = __file__.split('\\')
     comfy_index = None
@@ -57,7 +61,7 @@ class Plot_Spectrogram():
         """
         return {
             "required": {
-                "audio_tensor": ("AUDIO", {}),
+                "audio": ("AUDIO", {}),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1}),
                 "window_size": ("INT", {"default": 512, "min": 1, "max": 10000000000, "step": 1}),
                 "overlap_size": ("INT", {"default": 256, "min": 1, "max": 10000000000, "step": 1}),
@@ -73,12 +77,12 @@ class Plot_Spectrogram():
     FUNCTION = "PlotSpectrogram"
     OUTPUT_NODE = True
 
-    CATEGORY = "🎵Jags_Audio/Extra"
+    CATEGORY = "🎙️Jags_Audio/Extra"
 
-    def PlotSpectrogram(self, audio_tensor, sample_rate, window_size, overlap_size, color_map, labels):
+    def PlotSpectrogram(self, audio, sample_rate, window_size, overlap_size, color_map, labels):
         labels = labels == 'Enabled'
         images = []
-        for image in audio_tensor:
+        for image in audio:
             # get only last dim
             image = image[-1]
             image = Image.open(save_spectrogram_image(image.cpu(), sample_rate, window_size, overlap_size, color_map, labels))
@@ -89,9 +93,9 @@ class Plot_Spectrogram():
         images = torch.cat(images, dim=0)
         return (images, )
 
-def save_spectrogram_image(audio_tensor, sample_rate=44100, nperseg=512, noverlap=256, cmap='Spectral', labels=False):
+def save_spectrogram_image(audio, sample_rate=44100, nperseg=512, noverlap=256, cmap='Spectral', labels=False):
     # Compute the spectrogram
-    freqs, times, spectrogram = signal.spectrogram(audio_tensor.numpy(), fs=sample_rate, nperseg=nperseg, noverlap=noverlap)
+    freqs, times, spectrogram = signal.spectrogram(audio.numpy(), fs=sample_rate, nperseg=nperseg, noverlap=noverlap)
 
     # Convert the spectrogram to dB scale
     spectrogram = 10 * np.log10(spectrogram)
@@ -140,11 +144,11 @@ class ImageToSpectral():
             }
 
     RETURN_TYPES = ("STRING", "AUDIO", "INT")
-    RETURN_NAMES = ("path", "🎵audio", "sample_rate")
+    RETURN_NAMES = ("path", "🎙️audio", "sample_rate")
     FUNCTION = "DoImageToSpectral"
     OUTPUT_NODE = True
 
-    CATEGORY = "🎵Jags_Audio/Extra"
+    CATEGORY = "🎙️Jags_Audio/Extra"
 
     def tensor_to_pil(self, img):
         if img is not None:
@@ -183,8 +187,8 @@ class ImageToSpectral():
         return (audio_output, audio_total, sample_rate)
 
 
-def convert(inpt, output, minfreq, maxfreq, pxs, wavrate, rotate, invert):
-    img = Image.open(inpt).convert('L')
+def convert(input, output, minfreq, maxfreq, pxs, wavrate, rotate, invert):
+    img = Image.open(input).convert('L')
 
     # rotate image if requested
     if rotate:
