@@ -17,8 +17,6 @@ check_import("librosa", "librosa")
 
 import librosa.effects
 
-import librosa.effects
-
 
 # -----------------
 # AUDIO ARRANGEMENT
@@ -30,8 +28,8 @@ class JoinAudio:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor_1": ("AUDIO", ),
-                "tensor_2": ("AUDIO", ),
+                "audio_1": ("AUDIO", ),
+                "audio_2": ("AUDIO", ),
                 "gap": ("INT", {"default": 0, "min": -1e9, "max": 1e9, "step": 1}),
                 "overlap_method": (("overwrite", "linear", "sigmoid"), {"default": "sigmoid"})
                 },
@@ -41,16 +39,16 @@ class JoinAudio:
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵joined_audio", "sample_rate")
+    RETURN_NAMES = ("🎙️joined_audio", "sample_rate")
     FUNCTION = "join_audio"
 
-    CATEGORY = "🎵Jags_Audio/Arrangement"
+    CATEGORY = "🎙️Jags_Audio/Arrangement"
 
-    def join_audio(self, tensor_1, tensor_2, gap, overlap_method, sample_rate):
-        joined_length = tensor_1.size(2) + tensor_2.size(2) + gap
-        joined_tensor = torch.zeros((tensor_1.size(0), tensor_1.size(1), joined_length), device=tensor_1.device)
-        tensor_1_masked = tensor_1.clone()
-        tensor_2_masked = tensor_2.clone()
+    def join_audio(self, audio_1, audio_2, gap, overlap_method, sample_rate):
+        joined_length = audio_1.size(2) + audio_2.size(2) + gap
+        joined_tensor = torch.zeros((audio_1.size(0), audio_1.size(1), joined_length), device=audio_1.device)
+        tensor_1_masked = audio_1.clone()
+        tensor_2_masked = audio_2.clone()
 
         # Overlapping
         if gap < 0:
@@ -62,12 +60,12 @@ class JoinAudio:
                 k = 6
                 mask = np.linspace(-1.0, 1.0, num=gap_abs)
                 mask = 1 / (1 + np.exp(-mask * k))
-            mask = torch.from_numpy(mask).to(device=tensor_1.device)
+            mask = torch.from_numpy(mask).to(device=audio_1.device)
             tensor_1_masked[:, :, -gap_abs:] *= 1.0 - mask
             tensor_2_masked[:, :, :gap_abs] *= mask
 
-        joined_tensor[:, :, :tensor_1.size(2)] += tensor_1_masked
-        joined_tensor[:, :, tensor_1.size(2) + gap:] += tensor_2_masked
+        joined_tensor[:, :, :audio_1.size(2)] += tensor_1_masked
+        joined_tensor[:, :, audio_1.size(2) + gap:] += tensor_2_masked
 
         return joined_tensor, sample_rate
 
@@ -77,7 +75,7 @@ class BatchJoinAudio:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "batch_tensor": ("AUDIO",),
+                "batch_audio": ("AUDIO",),
                 "gap": ("INT", {"default": 0, "min": -1e9, "max": 1e9, "step": 1}),
                 "overlap_method": (("overwrite", "linear", "sigmoid"), {"default": "sigmoid"})
             },
@@ -87,15 +85,15 @@ class BatchJoinAudio:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵joined_audio", "sample_rate")
+    RETURN_NAMES = ("🎙️joined_audio", "sample_rate")
     FUNCTION = "batch_join_audio"
 
-    CATEGORY = "🎵Jags_Audio/Arrangement"
+    CATEGORY = "🎙️Jags_Audio/Arrangement"
 
-    def batch_join_audio(self, batch_tensor, gap, overlap_method, sample_rate):
-        joined_length = batch_tensor.size(2) * batch_tensor.size(0) + gap * (batch_tensor.size(0) - 1)
-        joined_tensor = torch.zeros((1, batch_tensor.size(1), joined_length), device=batch_tensor.device)
-        tensor_masked = batch_tensor.clone()
+    def batch_join_audio(self, batch_audio, gap, overlap_method, sample_rate):
+        joined_length = batch_audio.size(2) * batch_audio.size(0) + gap * (batch_audio.size(0) - 1)
+        joined_tensor = torch.zeros((1, batch_audio.size(1), joined_length), device=batch_audio.device)
+        tensor_masked = batch_audio.clone()
 
         # Overlapping
         if gap < 0:
@@ -107,13 +105,13 @@ class BatchJoinAudio:
                 k = 6
                 mask = np.linspace(-1.0, 1.0, num=gap_abs)
                 mask = 1 / (1 + np.exp(-mask * k))
-            mask = torch.from_numpy(mask).to(device=batch_tensor.device)
+            mask = torch.from_numpy(mask).to(device=batch_audio.device)
             tensor_masked[:-1, :, -gap_abs:] *= 1.0 - mask
             tensor_masked[1:, :, :gap_abs] *= mask
 
         for i, sample in enumerate(tensor_masked):
-            sample_start = (batch_tensor.size(2) + gap) * i
-            sample_end = sample_start + batch_tensor.size(2)
+            sample_start = (batch_audio.size(2) + gap) * i
+            sample_end = sample_start + batch_audio.size(2)
             joined_tensor[:, :, sample_start:sample_end] += sample
 
         return joined_tensor, sample_rate
@@ -124,7 +122,7 @@ class CutAudio:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO",),
+                "audio": ("AUDIO",),
                 "start": ("INT",),
                 "end": ("INT",),
             },
@@ -134,13 +132,13 @@ class CutAudio:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵cut_audio", "sample_rate")
+    RETURN_NAMES = ("🎙️cut_audio", "sample_rate")
     FUNCTION = "cut_audio"
 
-    CATEGORY = "🎵Jags_Audio/Arrangement"
+    CATEGORY = "🎙️Jags_Audio/Arrangement"
 
-    def cut_audio(self, tensor, start, end, sample_rate):
-        return tensor.clone()[:, :, start:end], sample_rate
+    def cut_audio(self, audio, start, end, sample_rate):
+        return audio.clone()[:, :, start:end], sample_rate
 
 
 class DuplicateAudio:
@@ -148,7 +146,7 @@ class DuplicateAudio:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO",),
+                "audio": ("AUDIO",),
                 "count": ("INT", {"default": 1, "min": 1, "max": 1024, "step": 1}),
             },
             "optional": {
@@ -157,13 +155,13 @@ class DuplicateAudio:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵out_audio", "sample_rate")
+    RETURN_NAMES = ("🎙️out_audio", "sample_rate")
     FUNCTION = "duplicate_audio"
 
-    CATEGORY = "🎵Jags_Audio/Arrangement"
+    CATEGORY = "🎙️Jags_Audio/Arrangement"
 
-    def duplicate_audio(self, tensor, count, sample_rate):
-        return tensor.repeat(count, 1, 1), sample_rate
+    def duplicate_audio(self, audio, count, sample_rate):
+        return audio.repeat(count, 1, 1), sample_rate
 
 
 # ------------------
@@ -176,7 +174,7 @@ class StretchAudio:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "rate": ("FLOAT", {"default": 1.0, "min": 1e-9, "max": 1e9, "step": 0.1})
                 },
             "optional": {
@@ -185,12 +183,12 @@ class StretchAudio:
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "stretch_audio"
 
-    CATEGORY = "🎵Jags_Audio/Manipulation"
+    CATEGORY = "🎙️Jags_Audio/Manipulation"
 
-    def stretch_audio(self, tensor, rate, sample_rate):
+    def stretch_audio(self, audio, rate, sample_rate):
         tensor = tensor.cpu().numpy()
         #convert GPU tensor to CPU tensor for numpy else use a alternative method tensor.cuda().numpy ()
         y = tensor.cpu().numpy()
@@ -205,7 +203,7 @@ class ReverseAudio:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO",),
+                "audio": ("AUDIO",),
             },
             "optional": {
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1, "forceInput": True}),
@@ -213,13 +211,13 @@ class ReverseAudio:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "reverse_audio"
 
-    CATEGORY = "🎵Jags_Audio/Manipulation"
+    CATEGORY = "🎙️Jags_Audio/Manipulation"
 
-    def reverse_audio(self, tensor, sample_rate):
-        return torch.flip(tensor.clone(), (2,)), sample_rate
+    def reverse_audio(self, audio, sample_rate):
+        return torch.flip(audio.clone(), (2,)), sample_rate
 
 
 class ResampleAudio:
@@ -227,7 +225,7 @@ class ResampleAudio:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO",),
+                "audio": ("AUDIO",),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1}),
                 "sample_rate_target": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1}),
             },
@@ -235,12 +233,12 @@ class ResampleAudio:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵out_audio", "sample_rate")
+    RETURN_NAMES = ("🎙️out_audio", "sample_rate")
     FUNCTION = "resample_audio"
 
-    CATEGORY = "🎵Jags_Audio/Manipulation"
+    CATEGORY = "🎙️Jags_Audio/Manipulation"
 
-    def resample_audio(self, tensor, sample_rate, sample_rate_target):
+    def resample_audio(self, audio, sample_rate, sample_rate_target):
         tensor = tensor.cpu().numpy()
         #convert GPU tensor to CPU tensor for numpy else use a alternative method tensor.cuda().numpy ()
         y = tensor.cpu().numpy()
