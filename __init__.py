@@ -24,6 +24,7 @@ from .SampleDiffusion import *
 from .Spectrology import *
 from .VariationUtils import *
 from .WaveGen import *
+from .soundplayer import *
 
 """module_js_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "js")
 application_root_directory = os.path.dirname(folder_paths.__file__)
@@ -82,7 +83,9 @@ NODE_CLASS_MAPPINGS = {
     'GetSingle': GetSingle,
     'SequenceVariation': SequenceVariation,
     'BulkVariation': BulkVariation,
-    "GenerateAudioWave": WaveGenerator
+    "GenerateAudioWave": WaveGenerator,
+    "samplerate": samplerate,
+    "SoundPlayer": SoundPlayer,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     'JoinAudio': 'Jags_JoinAudio',
@@ -134,7 +137,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     'SequenceVariation': 'Jags_SequenceVariation',
     'GetSingle': 'Jags_GetSingle',
     'BulkVariation': 'Jags_BulkVariation',
-    "GenerateAudioWave": 'Jags_Wave Generator'
+    "GenerateAudioWave": 'Jags_Wave Generator',
+    "samplerate": "Jags_samplerate",
+    "SoundPlayer": "Jags_SoundPlayer",
 }
 CC_VERSION = 1.0
 
