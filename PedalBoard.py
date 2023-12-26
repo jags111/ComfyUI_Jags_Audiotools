@@ -72,7 +72,7 @@ class LoadVST():
     RETURN_NAMES = ("vst3", )
     FUNCTION = "load_vst3"
 
-    CATEGORY = "🎵Jags_Audio/Pedalboard"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard"
 
     def load_vst3(self, vst3_path):
         return (load_plugin(vst3_path), )
@@ -94,7 +94,7 @@ class OTT():
         """
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "vst3": ('VST3', ),
                 "depth": ("FLOAT", {'default': 100.0, "min": 0.0, "max": 100.0, "step": 1.0}),
@@ -115,14 +115,14 @@ class OTT():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_ott"
 
-    CATEGORY = "🎵Jags_Audio/Pedalboard/VST3Wrappers"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/VST3Wrappers"
 
     def apply_ott(
         self,
-        tensor,
+        audio,
         sample_rate,
         vst3,
         depth=100.0,
@@ -140,7 +140,7 @@ class OTT():
         ):
         params = locals()
         del params['vst3']
-        total_tensor = apply_vst3_tensor(tensor, sample_rate, vst3, params)
+        total_tensor = apply_vst3_tensor(audio, sample_rate, vst3, params)
 
         return (total_tensor, sample_rate)
 
@@ -156,7 +156,7 @@ class BitCrushEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "bit_depth": ("FLOAT", {'default': 8.0, "min": 0.0, "max": 32.0, "step": 0.1}),
                 },
@@ -165,13 +165,13 @@ class BitCrushEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_bitcrush"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_bitcrush(self, tensor, sample_rate, bit_depth=8.0, ):
+    def apply_bitcrush(self, audio, sample_rate, bit_depth=8.0, ):
         board = Pedalboard([Bitcrush(bit_depth=bit_depth)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
 
 
         return (total_tensor, sample_rate)
@@ -181,7 +181,7 @@ class ChorusEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "rate_hz": ("FLOAT", {'default': 1.0, "min": 0.0, "max": 10.0, "step": 0.1}),
                 "depth": ("FLOAT", {'default': 0.25, "min": 0.0, "max": 1.0, "step": 0.01}),
@@ -194,13 +194,13 @@ class ChorusEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_chorus"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_chorus(self, tensor, sample_rate, rate_hz=1.0, depth=0.25, centre_delay_ms=0.0, feedback=0.0, mix=0.5):
+    def apply_chorus(self, audio, sample_rate, rate_hz=1.0, depth=0.25, centre_delay_ms=0.0, feedback=0.0, mix=0.5):
         board = Pedalboard([Chorus(rate_hz=rate_hz, depth=depth, centre_delay_ms=centre_delay_ms, feedback=feedback, mix=mix)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
 
 
         return (total_tensor, sample_rate)
@@ -210,7 +210,7 @@ class ClippingEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "threshold_db": ("FLOAT", {'default': -6.0, "min": -100.0, "max": 100.0, "step": 0.1}),
                 },
@@ -219,13 +219,13 @@ class ClippingEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_clipping"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_clipping(self, tensor, sample_rate, threshold_db):
+    def apply_clipping(self, audio, sample_rate, threshold_db):
         board = Pedalboard([Clipping(threshold_db=threshold_db)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
 
 
         return (total_tensor, sample_rate)
@@ -235,7 +235,7 @@ class CompressorEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "threshold_db": ("FLOAT", {'default': -6.0, "min": -100.0, "max": 100.0, "step": 0.1}),
                 "ratio": ("FLOAT", {'default': 1.0, "min": 1.0, "max": 100.0, "step": 0.1}),
@@ -247,13 +247,13 @@ class CompressorEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_compressor"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_compressor(self, tensor, sample_rate, threshold_db=-6.0, ratio=1.0, attack_ms=1.0, release_ms=100.0):
+    def apply_compressor(self, audio, sample_rate, threshold_db=-6.0, ratio=1.0, attack_ms=1.0, release_ms=100.0):
         board = Pedalboard([Compressor(threshold_db=threshold_db, ratio=ratio, attack_ms=attack_ms, release_ms=release_ms)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class ConvolutionEffect():
@@ -261,7 +261,7 @@ class ConvolutionEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "impulse_response_path": ("STRING", {"default": "", "forceInput": True}),
                 "mix": ("FLOAT", {'default': 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
@@ -271,13 +271,13 @@ class ConvolutionEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_convolution"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_convolution(self, tensor, sample_rate, impulse_response_path, mix=1.0):
+    def apply_convolution(self, audio, sample_rate, impulse_response_path, mix=1.0):
         board = Pedalboard([Convolution(impulse_response_path=impulse_response_path, mix=mix)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class DelayEffect():
@@ -285,7 +285,7 @@ class DelayEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "delay_seconds": ("FLOAT", {'default': 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "feedback": ("FLOAT", {'default': 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
@@ -296,13 +296,13 @@ class DelayEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_delay"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_delay(self, tensor, sample_rate, delay_seconds=0.5, feedback=0.0, mix=0.5):
+    def apply_delay(self, audio, sample_rate, delay_seconds=0.5, feedback=0.0, mix=0.5):
         board = Pedalboard([Delay(delay_seconds=delay_seconds, feedback=feedback, mix=mix)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class DistortionEffect():
@@ -310,7 +310,7 @@ class DistortionEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "drive_db": ("FLOAT", {'default': 25.0, "min": 0.0, "max": 100.0, "step": 0.1}),
                 },
@@ -319,13 +319,13 @@ class DistortionEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_distortion"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_distortion(self, tensor, sample_rate, drive_db=25.0):
+    def apply_distortion(self, audio, sample_rate, drive_db=25.0):
         board = Pedalboard([Distortion(drive_db=drive_db)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class GainEffect():
@@ -333,7 +333,7 @@ class GainEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "gain_db": ("FLOAT", {'default': 0.0, "min": -100.0, "max": 100.0, "step": 0.1}),
                 },
@@ -342,13 +342,13 @@ class GainEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_gain"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_gain(self, tensor, sample_rate, gain_db=0.0):
+    def apply_gain(self, audio, sample_rate, gain_db=0.0):
         board = Pedalboard([Gain(gain_db=gain_db)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class InvertEffect():
@@ -356,7 +356,7 @@ class InvertEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 },
             "optional": {
@@ -364,13 +364,13 @@ class InvertEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_invert"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_invert(self, tensor, sample_rate):
+    def apply_invert(self, audio, sample_rate):
         board = Pedalboard([Invert()])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 
@@ -379,7 +379,7 @@ class LimiterEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "threshold_db": ("FLOAT", {'default': -10.0, "min": -100.0, "max": 0.0, "step": 0.1}),
                 "release_ms": ("FLOAT", {'default': 100.0, "min": 0.0, "max": 10000.0, "step": 0.1}),
@@ -389,13 +389,13 @@ class LimiterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_limiter"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_limiter(self, tensor, sample_rate, threshold_db=-10.0, release_ms=100.0):
+    def apply_limiter(self, audio, sample_rate, threshold_db=-10.0, release_ms=100.0):
         board = Pedalboard([Limiter(threshold_db=threshold_db, release_ms=release_ms)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 
@@ -404,7 +404,7 @@ class MP3CompressorEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "vbr_quality": ("FLOAT", {'default': 2.0, "min": 0.0, "max": 10.0, "step": 0.1}),
                 },
@@ -413,13 +413,13 @@ class MP3CompressorEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_mp3_compressor"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_mp3_compressor(self, tensor, sample_rate, vbr_quality=2.0):
+    def apply_mp3_compressor(self, audio, sample_rate, vbr_quality=2.0):
         board = Pedalboard([MP3Compressor(vbr_quality=vbr_quality)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 
@@ -428,7 +428,7 @@ class NoiseGateEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "threshold_db": ("FLOAT", {'default': -100.0, "min": -100.0, "max": 0.0, "step": 0.1}),
                 "ratio": ("FLOAT", {'default': 10.0, "min": 0.0, "max": 100.0, "step": 0.1}),
@@ -440,13 +440,13 @@ class NoiseGateEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_noise_gate"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_noise_gate(self, tensor, sample_rate, threshold_db=-100.0, ratio=10.0, attack_ms=1.0, release_ms=100.0):
+    def apply_noise_gate(self, audio, sample_rate, threshold_db=-100.0, ratio=10.0, attack_ms=1.0, release_ms=100.0):
         board = Pedalboard([NoiseGate(threshold_db=threshold_db, ratio=ratio, attack_ms=attack_ms, release_ms=release_ms)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 # class pedalboard.PitchShift(semitones: float = 0.0)
@@ -456,7 +456,7 @@ class PitchShiftEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "semitones": ("FLOAT", {'default': 0.0, "min": -96.0, "max": 96.0, "step": 0.1}),
                 },
@@ -465,13 +465,13 @@ class PitchShiftEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_pitch_shift"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_pitch_shift(self, tensor, sample_rate, semitones=0.0):
+    def apply_pitch_shift(self,audio, sample_rate, semitones=0.0):
         board = Pedalboard([PitchShift(semitones=semitones)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class PhaserEffect():
@@ -479,7 +479,7 @@ class PhaserEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "rate_hz": ("FLOAT", {'default': 1.0, "min": 0.0, "max": 100.0, "step": 0.1}),
                 "depth": ("FLOAT", {'default': 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
@@ -492,13 +492,13 @@ class PhaserEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_phaser"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_phaser(self, tensor, sample_rate, rate_hz=1.0, depth=0.5, centre_frequency_hz=1300.0, feedback=0.0, mix=0.5):
+    def apply_phaser(self, audio, sample_rate, rate_hz=1.0, depth=0.5, centre_frequency_hz=1300.0, feedback=0.0, mix=0.5):
         board = Pedalboard([Phaser(rate_hz=rate_hz, depth=depth, centre_frequency_hz=centre_frequency_hz, feedback=feedback, mix=mix)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class ReverbEffect():
@@ -506,7 +506,7 @@ class ReverbEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "room_size": ("FLOAT", {'default': 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "damping": ("FLOAT", {'default': 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
@@ -520,13 +520,13 @@ class ReverbEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_reverb"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/FX"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/FX"
 
-    def apply_reverb(self, tensor, sample_rate, room_size=0.5, damping=0.5, wet_level=0.33, dry_level=0.4, width=1.0, freeze_mode=0.0):
+    def apply_reverb(self, audio, sample_rate, room_size=0.5, damping=0.5, wet_level=0.33, dry_level=0.4, width=1.0, freeze_mode=0.0):
         board = Pedalboard([Reverb(room_size=room_size, damping=damping, wet_level=wet_level, dry_level=dry_level, width=width, freeze_mode=freeze_mode)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 # ****************************************************************************
@@ -538,7 +538,7 @@ class HighShelfFilterEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "cutoff_frequency_hz": ("FLOAT", {'default': 440.0, "min": 0.0, "max": 10000.0, "step": 0.1}),
                 "gain_db": ("FLOAT", {'default': 0.0, "min": -100.0, "max": 100.0, "step": 0.1}),
@@ -549,13 +549,13 @@ class HighShelfFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_high_shelf_filter"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/Filters"
 
-    def apply_high_shelf_filter(self, tensor, sample_rate, cutoff_frequency_hz=440.0, gain_db=0.0, q=0.7071067690849304):
+    def apply_high_shelf_filter(self, audio, sample_rate, cutoff_frequency_hz=440.0, gain_db=0.0, q=0.7071067690849304):
         board = Pedalboard([HighShelfFilter(cutoff_frequency_hz=cutoff_frequency_hz, gain_db=gain_db, q=q)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class HighpassFilterEffect():
@@ -563,7 +563,7 @@ class HighpassFilterEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "cutoff_frequency_hz": ("FLOAT", {'default': 50.0, "min": 0.0, "max": 10000.0, "step": 0.1}),
                 },
@@ -572,13 +572,13 @@ class HighpassFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_highpass_filter"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/Filters"
 
-    def apply_highpass_filter(self, tensor, sample_rate, cutoff_frequency_hz=50.0):
+    def apply_highpass_filter(self, audio, sample_rate, cutoff_frequency_hz=50.0):
         board = Pedalboard([HighpassFilter(cutoff_frequency_hz=cutoff_frequency_hz)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class LadderFilterEffect():
@@ -586,7 +586,7 @@ class LadderFilterEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "mode": (['LPF12', 'LPF24', 'BPF12', 'BPF24', 'HPF12', 'HPF24'], {'default': 'LPF12'}),
                 "cutoff_hz": ("FLOAT", {'default': 200.0, "min": 0.0, "max": 10000.0, "step": 0.1}),
@@ -598,14 +598,14 @@ class LadderFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_ladder_filter"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/Filters"
 
-    def apply_ladder_filter(self, tensor, sample_rate, mode='LPF12', cutoff_hz=200.0, resonance=0.0, drive=1.0):
+    def apply_ladder_filter(self, audio, sample_rate, mode='LPF12', cutoff_hz=200.0, resonance=0.0, drive=1.0):
         mode = getattr(LadderFilter, mode)
         board = Pedalboard([LadderFilter(mode=mode, cutoff_hz=cutoff_hz, resonance=resonance, drive=drive)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class LowShelfFilterEffect():
@@ -613,7 +613,7 @@ class LowShelfFilterEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "cutoff_frequency_hz": ("FLOAT", {'default': 440.0, "min": 0.0, "max": 10000.0, "step": 0.1}),
                 "gain_db": ("FLOAT", {'default': 0.0, "min": -100.0, "max": 100.0, "step": 0.1}),
@@ -624,13 +624,13 @@ class LowShelfFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_low_shelf_filter"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/Filters"
 
-    def apply_low_shelf_filter(self, tensor, sample_rate, cutoff_frequency_hz=440.0, gain_db=0.0, q=0.7071067690849304):
+    def apply_low_shelf_filter(self, audio, sample_rate, cutoff_frequency_hz=440.0, gain_db=0.0, q=0.7071067690849304):
         board = Pedalboard([LowShelfFilter(cutoff_frequency_hz=cutoff_frequency_hz, gain_db=gain_db, q=q)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class LowpassFilterEffect():
@@ -638,7 +638,7 @@ class LowpassFilterEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "cutoff_frequency_hz": ("FLOAT", {'default': 50.0, "min": 0.0, "max": 10000.0, "step": 0.1}),
                 },
@@ -647,13 +647,13 @@ class LowpassFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_lowpass_filter"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/Filters"
 
-    def apply_lowpass_filter(self, tensor, sample_rate, cutoff_frequency_hz=50.0):
+    def apply_lowpass_filter(self, audio, sample_rate, cutoff_frequency_hz=50.0):
         board = Pedalboard([LowpassFilter(cutoff_frequency_hz=cutoff_frequency_hz)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 class PeakFilterEffect():
@@ -661,7 +661,7 @@ class PeakFilterEffect():
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO", ),
+                "audio": ("AUDIO", ),
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 10000000000, "step": 1, "forceInput": True}),
                 "cutoff_frequency_hz": ("FLOAT", {'default': 440.0, "min": 0.0, "max": 10000.0, "step": 0.1}),
                 "gain_db": ("FLOAT", {'default': 0.0, "min": -100.0, "max": 100.0, "step": 0.1}),
@@ -672,13 +672,13 @@ class PeakFilterEffect():
             }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "apply_peak_filter"
-    CATEGORY = "🎵Jags_Audio/Pedalboard/Filters"
+    CATEGORY = "🎙️Jags_Audio/Pedalboard/Filters"
 
-    def apply_peak_filter(self, tensor, sample_rate, cutoff_frequency_hz=440.0, gain_db=0.0, q=0.7071067690849304):
+    def apply_peak_filter(self, audio, sample_rate, cutoff_frequency_hz=440.0, gain_db=0.0, q=0.7071067690849304):
         board = Pedalboard([PeakFilter(cutoff_frequency_hz=cutoff_frequency_hz, gain_db=gain_db, q=q)])
-        total_tensor = apply_board_tensor(tensor, sample_rate, board)
+        total_tensor = apply_board_tensor(audio, sample_rate, board)
         return (total_tensor, sample_rate)
 
 NODE_CLASS_MAPPINGS = {
