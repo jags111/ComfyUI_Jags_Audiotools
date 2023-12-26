@@ -20,7 +20,7 @@ class SliceAudio:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO",),
+                "audio": ("AUDIO",),
                 "clip_size": ("INT", {"default": 1, "min": 1, "max": 1e9, "step": 1}),
             },
             "optional": {
@@ -32,10 +32,10 @@ class SliceAudio:
     RETURN_NAMES = ("audio_list", "sample_rate")
     FUNCTION = "slice_audio"
 
-    CATEGORY = "🎵Jags_Audio/VariationUtils"
+    CATEGORY = "🎙️Jags_Audio/VariationUtils"
 
-    def slice_audio(self, tensor, clip_size, sample_rate):
-        return list(torch.split(tensor.clone(), clip_size, 2)), sample_rate
+    def slice_audio(self, audio, clip_size, sample_rate):
+        return list(torch.split(audio.clone(), clip_size, 2)), sample_rate
 
 
 class BatchToList:
@@ -43,7 +43,7 @@ class BatchToList:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor": ("AUDIO",),
+                "audio": ("AUDIO",),
             },
             "optional": {
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1, "forceInput": True}),
@@ -54,10 +54,10 @@ class BatchToList:
     RETURN_NAMES = ("audio_list", "sample_rate")
     FUNCTION = "batch_to_list"
 
-    CATEGORY = "🎵Jags_Audio/VariationUtils"
+    CATEGORY = "🎙️Jags_Audio/VariationUtils"
 
-    def batch_to_list(self, tensor, sample_rate):
-        return list(torch.split(tensor.clone(), 1, 0)), sample_rate
+    def batch_to_list(self, audio, sample_rate):
+        return list(torch.split(audio.clone(), 1, 0)), sample_rate
 
 class LoadAudioDir:
     @classmethod
@@ -76,7 +76,7 @@ class LoadAudioDir:
     FUNCTION = "load_audio_dir"
     OUTPUT_NODE = True
 
-    CATEGORY = "🎵Jags_Audio/VariationUtils"
+    CATEGORY = "🎙️Jags_Audio/VariationUtils"
 
     def load_audio_dir(self, dir_path):
         tensor_list = []
@@ -113,7 +113,7 @@ class ListToBatch:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor_list": ("AUDIO_LIST",),
+                "audio_list": ("AUDIO_LIST",),
             },
             "optional": {
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1, "forceInput": True}),
@@ -121,21 +121,21 @@ class ListToBatch:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "list_to_batch"
 
-    CATEGORY = "🎵Jags_Audio/VariationUtils"
+    CATEGORY = "🎙️Jags_Audio/VariationUtils"
 
-    def list_to_batch(self, tensor_list, sample_rate):
+    def list_to_batch(self, audio_list, sample_rate):
         max_len = 0
         batch_size = 0
-        for tensor in tensor_list:
+        for tensor in audio_list:
             max_len = max(tensor.size(2), max_len)
             batch_size += tensor.size(0)
-        tensor_out = torch.zeros((batch_size, 2, max_len), device=tensor_list[0].device)
+        tensor_out = torch.zeros((batch_size, 2, max_len), device=audio_list[0].device)
 
         batch_start = 0
-        for tensor in tensor_list:
+        for tensor in audio_list:
             batch_end = batch_start + tensor.size(0)
             tensor_out[batch_start:batch_end, :, :tensor.size(2)] += tensor
             batch_start = batch_end
@@ -148,7 +148,7 @@ class ConcatAudioList:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor_list": ("AUDIO_LIST",)
+                "audio_list": ("AUDIO_LIST",)
             },
             "optional": {
                 "sample_rate": ("INT", {"default": 44100, "min": 1, "max": 1e9, "step": 1, "forceInput": True}),
@@ -156,13 +156,13 @@ class ConcatAudioList:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "concat_audio"
 
-    CATEGORY = "🎵Jags_Audio/VariationUtils"
+    CATEGORY = "🎙️Jags_Audio/VariationUtils"
 
-    def concat_audio(self, tensor_list, sample_rate):
-        return torch.cat(tensor_list, 2), sample_rate
+    def concat_audio(self, audio_list, sample_rate):
+        return torch.cat(audio_list, 2), sample_rate
 
 
 # Perform variation on each audio tensor in a list
@@ -187,7 +187,7 @@ class SequenceVariation:
                 "scheduler": (SchedulerType._member_names_, {"default": "V_CRASH"}),
                 "noise_level": ("FLOAT", {"default": 0.7, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "seed": ("INT", {"default": -1}),
-                "tensor_list": ("AUDIO_LIST",)
+                "audio_list": ("AUDIO_LIST",)
             },
             "optional": {},
         }
@@ -196,13 +196,13 @@ class SequenceVariation:
     RETURN_NAMES = ("audio_list", "sample_rate")
     FUNCTION = "do_variation"
 
-    CATEGORY = "🎵Jags_Audio/VariationUtils"
+    CATEGORY = "🎙️Jags_Audio/VariationUtils"
 
-    def do_variation(self, audio_model, batch_size, steps, sampler, sigma_min, sigma_max, rho, scheduler, tensor_list, noise_level=0.7, seed=-1):
+    def do_variation(self, audio_model, batch_size, steps, sampler, sigma_min, sigma_max, rho, scheduler, audio_list, noise_level=0.7, seed=-1):
         audio_inference = AudioInference()
         tensor_list_out = []
         sample_rate = 44100
-        for tensor in tensor_list:
+        for tensor in audio_list:
             _, tensor_out, sample_rate = audio_inference.do_sample(
                 audio_model=audio_model,
                 mode='Variation',
@@ -224,7 +224,7 @@ class GetSingle:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "tensor_list": ("AUDIO_LIST",),
+                "audio_list": ("AUDIO_LIST",),
                 "index": ("INT", {"default": 1, "min": 1, "max": 1e9, "step": 1})
             },
             "optional": {
@@ -233,13 +233,13 @@ class GetSingle:
         }
 
     RETURN_TYPES = ("AUDIO", "INT")
-    RETURN_NAMES = ("🎵audio", "sample_rate")
+    RETURN_NAMES = ("🎙️audio", "sample_rate")
     FUNCTION = "get_single"
 
-    CATEGORY = "🎵Jags_Audio/VariationUtils"
+    CATEGORY = "🎙️Jags_Audio/VariationUtils"
 
-    def get_single(self, tensor_list, index, sample_rate):
-        return tensor_list[index], sample_rate
+    def get_single(self, audio_list, index, sample_rate):
+        return audio_list[index], sample_rate
 # ----------
 # PROCESSING
 # ----------
@@ -267,7 +267,7 @@ class BulkVariation:
                 "scheduler": (SchedulerType._member_names_, {"default": "V_CRASH"}),
                 "noise_level": ("FLOAT", {"default": 0.7, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "seed": ("INT", {"default": -1}),
-                "tensor_list": ("AUDIO_LIST",)
+                "audio_list": ("AUDIO_LIST",)
             },
             "optional": {},
         }
@@ -276,13 +276,13 @@ class BulkVariation:
     RETURN_NAMES = ("audio_list", "sample_rate")
     FUNCTION = "do_variation"
 
-    CATEGORY = "🎵Jags_Audio/ComfyUI_Jags_Audiotools"
+    CATEGORY = "🎙️Jags_Audio/VariationUtils"
 
-    def do_variation(self, audio_model, batch_size, steps, sampler, sigma_min, sigma_max, rho, scheduler, tensor_list, noise_level=0.7, seed=-1):
+    def do_variation(self, audio_model, batch_size, steps, sampler, sigma_min, sigma_max, rho, scheduler, audio_list, noise_level=0.7, seed=-1):
         audio_inference = AudioInference()
         tensor_list_out = []
         sample_rate = 44100
-        for tensor in tensor_list:
+        for tensor in audio_list:
             _, tensor_out, sample_rate = audio_inference.do_sample(
                 audio_model=audio_model,
                 mode='Variation',
