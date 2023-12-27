@@ -1,4 +1,4 @@
-# ComfyUI_Jags_Audiotools
+# 🎙️ComfyUI_Jags_Audiotools🎙️
 A collection amazing audio tools for working with audio and sound files in comfyUI
 
 ✨🍬Please note the work in this repo is not completed and still in progress and code will break until all things are sorted. Please wait as will announce same in the update here. Thanks for your support. Also note for any issues on the nodes, kindly share your workflow and alos always update comfyUI base including all dependencies.✨🍬<br>
