@@ -3,9 +3,9 @@ A collection amazing audio tools for working with audio and sound files in comfy
 
 ✨🍬Please note the work in this repo is not completed and still in progress and code will break until all things are sorted. Please wait as will announce same in the update here. Thanks for your support. Also note for any issues on the nodes, kindly share your workflow and alos always update comfyUI base including all dependencies.✨🍬<br>
 
-#"As on date some three nodes are having issues which is being resolved , especially load audio and play audio nodes"
+# "As on date some three nodes are having issues which is being resolved , especially load audio and play audio nodes"
 
-🌈 🍬 Note we have made changes to the original repo by **Diontimmer** here and thankful to him for making htis possible , adding new nodes to experiment and certain features, experimental audio with contant updates. If you face any issue, ensure you have updated ComfyUi to the latest version and updates all requirements and share your workflow in the Issues. we are thankful to Harmonai-org and origianl repo for same🌈
+🌈 🍬 Note we have made changes to the original repo by **Diontimmer** here and thankful to him for making this possible , adding new nodes to experiment and certain features, experimental audio with contant updates. If you face any issue, ensure you have updated ComfyUi to the latest version and updates all requirements and share your workflow in the Issues. we are thankful to Harmonai-org and origianl repo for same🌈
 
 # *Sample generator*  Tools to train a generative model on arbitrary audio samples
 
