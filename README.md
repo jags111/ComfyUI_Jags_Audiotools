@@ -41,7 +41,7 @@ Includes a couple of  helper functions.
 <img src = images/2023-12-03_01-23-48.png >
 
 
-### ComfyUI_Jags_Audiotools- WIKI
+### 🎸ComfyUI_Jags_Audiotools- WIKI
 
 Link to the workflow and explanations : <a href ="https://github.com/jags111/ComfyUI_Jags_Audiotools/wiki"> **AUDIO TOOLS WIKI** </a>
 
