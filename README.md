@@ -12,7 +12,7 @@ A collection amazing audio tools for working with audio and sound files in comfy
 
 A big shout out and thanks to the wonderful work done on Sample diffusion by Harmonai and a lot of core code is ported from same to this repo and any queries on the working for same can be linked to the repo ass shown here. <a href ="https://github.com/Harmonai-org/sample-generator"> **sample-generator** </a>
 
-### Features
+### Features 🎺 🎸 🪕 🎻 🪘 🥁 🪗 🎤
 
 Allows the use of trained dance diffusion/sample generator models in ComfyUI.
 
