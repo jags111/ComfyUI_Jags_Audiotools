@@ -57,7 +57,7 @@ class SoundPlayer:
         }
 
     RETURN_TYPES = ("PATH","AUDIO")
-    RETRUN_NAMES = ("STRING", "🎙️audio")
+    RETURN_NAMES = ("STRING", "🎙️audio")
     FUNCTION = "play_audio"  # Change as per the primary function
     CATEGORY = "🎙️Jags_Audio/AudioHelpers"
 
