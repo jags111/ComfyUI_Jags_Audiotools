@@ -18,3 +18,4 @@ pydub
 pygame
 tk
 numpy
+audio_diffusion_pytorch
