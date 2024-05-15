@@ -1,16 +1,16 @@
 # 🎙️ComfyUI_Jags_Audiotools🎙️
 A collection amazing audio tools for working with audio and sound files in comfyUI
 
-✨🍬Please note the work in this repo is not completed and still in progress and code will break until all things are sorted. Please wait as will announce same in the update here. Thanks for your support. Also note for any issues on the nodes, kindly share your workflow and alos always update comfyUI base including all dependencies.✨🍬<br>
+✨🍬Please note the work in this repo is not completed and still in progress and code will break until all things are sorted. Please wait as will announce same in the update here. Thanks for your support. Also note for any issues on the nodes, kindly share your workflow and also always update comfyUI base including all dependencies.✨🍬<br>
 
  "As on date some three nodes are having issues which is being resolved , especially load audio and play audio nodes"
  we are also adding functionality for LSP plugins and Open-Source Audio Plugins & Apps; if you have some cool suggestions would welcome creating a issue on same so can work on it to add same in. 
 
-🌈 🍬 Note we have made changes to the original repo by **Diontimmer** here and thankful to him for making this possible , adding new nodes to experiment and certain features, experimental audio with contant updates. If you face any issue, ensure you have updated ComfyUi to the latest version and updates all requirements and share your workflow in the Issues. we are thankful to Harmonai-org and origianl repo for same🌈
+🌈 🍬 Note we have made changes to the original repo by **Diontimmer** here and thankful to him for making this possible , adding new nodes to experiment and certain features, experimental audio with contant updates. If you face any issue, ensure you have updated ComfyUI to the latest version and update all requirements and share your workflow in the Issues. we are thankful to Harmonai-org and origianl repo for same🌈
 
 # *Sample generator*  Tools to train a generative model on arbitrary audio samples
 
-A big shout out and thanks to the wonderful work done on Sample diffusion by Harmonai and a lot of core code is ported from same to this repo and any queries on the working for same can be linked to the repo ass shown here. <a href ="https://github.com/Harmonai-org/sample-generator"> **sample-generator** </a>
+A big shout out and thanks to the wonderful work done on Sample diffusion by Harmonai and a lot of core code is ported from same to this repo and any queries on the working for same can be linked to the repo as shown here. <a href ="https://github.com/Harmonai-org/sample-generator"> **sample-generator** </a>
 
 ### Features 🎺 🎸 🪕 🎻 🪘 🥁 🪗 🎤
 
