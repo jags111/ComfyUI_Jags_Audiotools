@@ -1,6 +1,6 @@
 [project]
 name = "comfyui_jags_audiotools"
-description = ""
+description = "ComfyUI_Jags_Audiotools🎙️A collection amazing audio tools for working with audio and sound files in comfyUI"
 version = "1.0.0"
 license = "LICENSE"
 dependencies = ["einops", "pandas", "prefigure", "pytorch_lightning", "scipy", "torch", "torchaudio", "tqdm", "wandb", "matplotlib", "torchvision", "k-diffusion", "PySoundFile", "black", "diffusers", "v-diffusion-pytorch", "pydub", "pygame", "tk", "numpy", "audio_diffusion_pytorch"]
@@ -9,7 +9,7 @@ dependencies = ["einops", "pandas", "prefigure", "pytorch_lightning", "scipy", "
 Repository = "https://github.com/jags111/ComfyUI_Jags_Audiotools"
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "jags111"
 DisplayName = "ComfyUI_Jags_Audiotools"
 Icon = ""
 Models = [{location = "/checkpoints/model.safetensor", model_url = "https://example.com/model.zip"}]
