@@ -1,0 +1,15 @@
+[project]
+name = "comfyui_jags_audiotools"
+description = ""
+version = "1.0.0"
+license = "LICENSE"
+dependencies = ["einops", "pandas", "prefigure", "pytorch_lightning", "scipy", "torch", "torchaudio", "tqdm", "wandb", "matplotlib", "torchvision", "k-diffusion", "PySoundFile", "black", "diffusers", "v-diffusion-pytorch", "pydub", "pygame", "tk", "numpy", "audio_diffusion_pytorch"]
+
+[project.urls]
+Repository = "https://github.com/jags111/ComfyUI_Jags_Audiotools"
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI_Jags_Audiotools"
+Icon = ""
+Models = [{location = "/checkpoints/model.safetensor", model_url = "https://example.com/model.zip"}]
