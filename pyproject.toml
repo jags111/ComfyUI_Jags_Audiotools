@@ -2,7 +2,7 @@
 name = "comfyui_jags_audiotools"
 description = "ComfyUI_Jags_Audiotools🎙️A collection amazing audio tools for working with audio and sound files in comfyUI"
 version = "1.0.0"
-license = "LICENSE"
+license = { file = "LICENSE" }
 dependencies = ["einops", "pandas", "prefigure", "pytorch_lightning", "scipy", "torch", "torchaudio", "tqdm", "wandb", "matplotlib", "torchvision", "k-diffusion", "PySoundFile", "black", "diffusers", "v-diffusion-pytorch", "pydub", "pygame", "tk", "numpy", "audio_diffusion_pytorch"]
 
 [project.urls]
