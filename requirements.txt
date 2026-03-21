@@ -19,3 +19,4 @@ pygame
 tk
 numpy
 audio_diffusion_pytorch
+setuptools==69.5.1  # fix pkg_config.packaging issue
