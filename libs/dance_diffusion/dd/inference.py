@@ -7,12 +7,12 @@ from diffusion.utils import t_to_alpha_sigma
 from k_diffusion.external import VDenoiser
 
 from typing import Tuple, Callable
-from libs.diffusion_library.scheduler import SchedulerType
-from libs.diffusion_library.sampler import SamplerType
-from libs.dance_diffusion.base.model import ModelWrapperBase
-from libs.dance_diffusion.base.inference import InferenceBase
+from ...diffusion_library.scheduler import SchedulerType
+from ...diffusion_library.sampler import SamplerType
+from ...dance_diffusion.base.model import ModelWrapperBase
+from ...dance_diffusion.base.inference import InferenceBase
 
-from libs.util.util import tensor_slerp_2D, PosteriorSampling
+from ...util.util import tensor_slerp_2D, PosteriorSampling
     
 class DDInference(InferenceBase):
     
@@ -284,12 +284,12 @@ class DDInference(InferenceBase):
         else:
             return output[:, :, -half_chunk_size:]
 from typing import Tuple, Callable
-from libs.diffusion_library.scheduler import SchedulerType
-from libs.diffusion_library.sampler import SamplerType
-from libs.dance_diffusion.base.model import ModelWrapperBase
-from libs.dance_diffusion.base.inference import InferenceBase
+from ...diffusion_library.scheduler import SchedulerType
+from ...diffusion_library.sampler import SamplerType
+from ...dance_diffusion.base.model import ModelWrapperBase
+from ...dance_diffusion.base.inference import InferenceBase
 
-from libs.util.util import tensor_slerp_2D, PosteriorSampling
+from ...util.util import tensor_slerp_2D, PosteriorSampling
     
 class DDInference(InferenceBase):
     

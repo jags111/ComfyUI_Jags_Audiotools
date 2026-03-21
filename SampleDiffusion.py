@@ -92,12 +92,12 @@ libs = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 #    os.system (os.path.join(comfy_dir, libs))
 #sys.path.append(os.path.join(comfy_dir, libs ))
 
-from libs.util.util import load_audio, crop_audio
-from libs.dance_diffusion.api import RequestHandler, Request, ModelType
-from libs.diffusion_library.sampler import SamplerType
-from libs.diffusion_library.scheduler import SchedulerType
-from libs.dance_diffusion.dd.model import DDModelWrapper
-from libs.dance_diffusion.dd.inference import DDInference
+from .libs.util.util import load_audio, crop_audio
+from .libs.dance_diffusion.api import RequestHandler, Request, ModelType
+from .libs.diffusion_library.sampler import SamplerType
+from .libs.diffusion_library.scheduler import SchedulerType
+from .libs.dance_diffusion.dd.model import DDModelWrapper
+from .libs.dance_diffusion.dd.inference import DDInference
 
 from scipy.fft import fft
 from pydub import AudioSegment
